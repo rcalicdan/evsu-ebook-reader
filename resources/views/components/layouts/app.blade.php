@@ -30,7 +30,7 @@
             </main>
         </div>
 
-        <x-partials.logout-modal />
+        <livewire:auth.logout/>
     </div>
 
     @stack('scripts')
