@@ -70,9 +70,9 @@
                 <div>
                     <x-form.label for="role" required>System Role</x-form.label>
                     <x-form.select id="role" wire:model="role" placeholder="Select Role" :error="$errors->first('role')">
-                        <option value="student">Student</option>
-                        <option value="admin">Admin</option>
-                        <option value="superadmin">Super Admin</option>
+                        @foreach ($roles as $value => $label)
+                            <option value="{{ $value }}">{{ $label }}</option>
+                        @endforeach
                     </x-form.select>
                 </div>
             </x-form.grid>
