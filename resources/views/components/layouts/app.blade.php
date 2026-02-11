@@ -6,6 +6,7 @@
     <title>{{ $title ?? 'University Document Hub' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style> [x-cloak] { display: none !important; } </style>
+    @livewireStyles
 </head>
 
 <body class="bg-gray-50 font-sans antialiased">
@@ -32,6 +33,8 @@
         <x-partials.logout-modal />
     </div>
 
+    @stack('scripts')
+    @livewireScripts
     <script>
         function adminLayout() {
             return {
