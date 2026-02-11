@@ -122,8 +122,14 @@ class UpdatePage extends Component
     {
         $authUser = auth()->user();
         
-        if ($authUser->isSuperAdmin()) {
+        if ($authUser->isSuperAdmin() && $authUser->id !== $this->user->id) {
             return $this->getRoles();
+        }
+        
+        if ($authUser->id === $this->user->id && ($authUser->isSuperAdmin() || $authUser->isAdmin())) {
+            return [
+                $this->user->role->value => $this->user->role->label(),
+            ];
         }
         
         if ($authUser->isAdmin()) {
@@ -132,21 +138,11 @@ class UpdatePage extends Component
                     UserRole::STUDENT->value => UserRole::STUDENT->label(),
                 ];
             }
-            
-            if ($authUser->id === $this->user->id) {
-                return [
-                    $this->user->role->value => $this->user->role->label(),
-                ];
-            }
         }
         
-        if ($authUser->id === $this->user->id) {
-            return [
-                $this->user->role->value => $this->user->role->label(),
-            ];
-        }
-        
-        return [];
+        return [
+            $this->user->role->value => $this->user->role->label(),
+        ];
     }
 
     private function getRoles(): array
