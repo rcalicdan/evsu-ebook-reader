@@ -39,7 +39,7 @@ class UpdatePage extends Component
     public function rules(): array
     {
         $allowedRoles = $this->getAllowedRoles();
-        
+
         $rules = [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
@@ -73,11 +73,11 @@ class UpdatePage extends Component
 
     public function update(): void
     {
+        $this->authorize('update', $this->user);
+
+        $validated = $this->validate();
+
         try {
-            $this->authorize('update', $this->user);
-
-            $validated = $this->validate();
-
             $updateData = [
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
@@ -96,12 +96,6 @@ class UpdatePage extends Component
             RedirectNotification::success('User updated successfully!');
 
             $this->redirect(route('users.index'), navigate: true);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch(
-                'notify',
-                message: 'You do not have permission to update this user.',
-                type: 'error'
-            );
         } catch (\Exception $e) {
             $this->dispatch(
                 'notify',
@@ -121,17 +115,17 @@ class UpdatePage extends Component
     private function getAllowedRoles(): array
     {
         $authUser = auth()->user();
-        
+
         if ($authUser->isSuperAdmin() && $authUser->id !== $this->user->id) {
             return $this->getRoles();
         }
-        
+
         if ($authUser->id === $this->user->id && ($authUser->isSuperAdmin() || $authUser->isAdmin())) {
             return [
                 $this->user->role->value => $this->user->role->label(),
             ];
         }
-        
+
         if ($authUser->isAdmin()) {
             if ($this->user->isStudent()) {
                 return [
@@ -139,7 +133,7 @@ class UpdatePage extends Component
                 ];
             }
         }
-        
+
         return [
             $this->user->role->value => $this->user->role->label(),
         ];

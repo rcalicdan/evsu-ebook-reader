@@ -65,11 +65,11 @@ class CreatePage extends Component
 
     public function save(): void
     {
+        $this->authorize('create', User::class);
+
+        $validated = $this->validate();
+
         try {
-            $this->authorize('create', User::class);
-
-            $validated = $this->validate();
-
             User::create([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
@@ -81,12 +81,6 @@ class CreatePage extends Component
             RedirectNotification::success('User created successfully!');
 
             $this->redirect(route('users.index'), navigate: true);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch(
-                'notify',
-                message: 'You do not have permission to create users.',
-                type: 'error'
-            );
         } catch (\Exception $e) {
             $this->dispatch(
                 'notify',
