@@ -31,6 +31,8 @@
         </div>
 
         <livewire:auth.logout/>
+        
+        <x-ui.toast />
     </div>
 
     @stack('scripts')
