@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'University Document Hub' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style> [x-cloak] { display: none !important; } </style>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
     @livewireStyles
 </head>
 
 <body class="bg-gray-50 font-sans antialiased">
-    <div x-data="adminLayout()" 
-         @resize.window="onResize()"
-         class="flex h-screen overflow-hidden">
+    <div x-data="adminLayout()" @resize.window="onResize()" class="flex h-screen overflow-hidden">
 
         <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
             class="fixed inset-0 z-20 md:hidden bg-black/50 backdrop-blur-sm transition-opacity">
@@ -30,8 +33,9 @@
             </main>
         </div>
 
-        <livewire:auth.logout/>
-        
+        <livewire:auth.logout />
+        <x-ui.confirmation-modal />
+
         <x-ui.toast />
     </div>
 
@@ -59,4 +63,5 @@
         }
     </script>
 </body>
+
 </html>

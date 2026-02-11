@@ -4,6 +4,7 @@ namespace App\Livewire\Users;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\RedirectNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -37,15 +38,13 @@ class UpdatePage extends Component
 
     public function rules(): array
     {
+        $allowedRoles = $this->getAllowedRoles();
+        
         $rules = [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user->id)],
-            'role' => ['required', Rule::in([
-                UserRole::STUDENT->value,
-                UserRole::ADMIN->value,
-                UserRole::SUPERADMIN->value,
-            ])],
+            'role' => ['required', Rule::in(array_keys($allowedRoles))],
         ];
 
         if ($this->password) {
@@ -94,11 +93,7 @@ class UpdatePage extends Component
 
             $this->reset(['password', 'password_confirmation']);
 
-            $this->dispatch(
-                'notify',
-                message: 'User updated successfully!',
-                type: 'success'
-            );
+            RedirectNotification::success('User updated successfully!');
 
             $this->redirect(route('users.index'), navigate: true);
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
@@ -119,8 +114,39 @@ class UpdatePage extends Component
     public function render()
     {
         return view('livewire.users.update-page', [
-            'roles' => $this->getRoles(),
+            'roles' => $this->getAllowedRoles(),
         ]);
+    }
+
+    private function getAllowedRoles(): array
+    {
+        $authUser = auth()->user();
+        
+        if ($authUser->isSuperAdmin()) {
+            return $this->getRoles();
+        }
+        
+        if ($authUser->isAdmin()) {
+            if ($this->user->isStudent()) {
+                return [
+                    UserRole::STUDENT->value => UserRole::STUDENT->label(),
+                ];
+            }
+            
+            if ($authUser->id === $this->user->id) {
+                return [
+                    $this->user->role->value => $this->user->role->label(),
+                ];
+            }
+        }
+        
+        if ($authUser->id === $this->user->id) {
+            return [
+                $this->user->role->value => $this->user->role->label(),
+            ];
+        }
+        
+        return [];
     }
 
     private function getRoles(): array

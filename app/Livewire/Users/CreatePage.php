@@ -4,6 +4,7 @@ namespace App\Livewire\Users;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\RedirectNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -25,19 +26,21 @@ class CreatePage extends Component
     public function mount(): void
     {
         $this->authorize('create', User::class);
+
+        if (auth()->user()->isAdmin()) {
+            $this->role = UserRole::STUDENT->value;
+        }
     }
 
     public function rules(): array
     {
+        $allowedRoles = $this->getAllowedRoles();
+
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', Rule::in([
-                UserRole::STUDENT->value,
-                UserRole::ADMIN->value,
-                UserRole::SUPERADMIN->value,
-            ])],
+            'role' => ['required', Rule::in(array_keys($allowedRoles))],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
@@ -75,11 +78,7 @@ class CreatePage extends Component
                 'password' => Hash::make($validated['password']),
             ]);
 
-            $this->dispatch(
-                'notify',
-                message: 'User created successfully!',
-                type: 'success'
-            );
+            RedirectNotification::success('User created successfully!');
 
             $this->redirect(route('users.index'), navigate: true);
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
@@ -100,8 +99,25 @@ class CreatePage extends Component
     public function render()
     {
         return view('livewire.users.create-page', [
-            'roles' => $this->getRoles(),
+            'roles' => $this->getAllowedRoles(),
         ]);
+    }
+
+    private function getAllowedRoles(): array
+    {
+        $user = auth()->user();
+
+        if ($user->isSuperAdmin()) {
+            return $this->getRoles();
+        }
+
+        if ($user->isAdmin()) {
+            return [
+                UserRole::STUDENT->value => UserRole::STUDENT->label(),
+            ];
+        }
+
+        return [];
     }
 
     private function getRoles(): array

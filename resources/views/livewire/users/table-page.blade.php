@@ -24,23 +24,19 @@
         <!-- Search & Filters -->
         <x-table.header>
             <div class="relative w-full md:w-96">
-                <input 
-                    type="text" 
-                    wire:model.live.debounce.300ms="search"
-                    placeholder="Search by name or email..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-university-red/20 focus:border-university-red transition-all"
-                >
-                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or email..."
+                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-university-red/20 focus:border-university-red transition-all">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
             </div>
-            
+
             <x-slot:filters>
-                <select 
-                    wire:model.live="roleFilter"
-                    class="bg-gray-50 border border-gray-200 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:border-university-red outline-none"
-                >
-                    @foreach($roles as $value => $label)
+                <select wire:model.live="roleFilter"
+                    class="bg-gray-50 border border-gray-200 text-gray-600 text-sm rounded-xl px-4 py-2.5 focus:border-university-red outline-none">
+                    @foreach ($roles as $value => $label)
                         <option value="{{ $value }}">{{ $label }}</option>
                     @endforeach
                 </select>
@@ -62,10 +58,7 @@
                         <x-table.row>
                             <x-table.cell>
                                 <div class="flex items-center">
-                                    <x-ui.avatar 
-                                        :name="$user->full_name" 
-                                        :variant="$user->isAdmin() || $user->isSuperAdmin() ? 'secondary' : 'primary'" 
-                                    />
+                                    <x-ui.avatar :name="$user->full_name" :variant="$user->isAdmin() || $user->isSuperAdmin() ? 'secondary' : 'primary'" />
                                     <span class="ml-3 font-bold text-gray-900">{{ $user->full_name }}</span>
                                 </div>
                             </x-table.cell>
@@ -76,7 +69,7 @@
 
                             <x-table.cell>
                                 @php
-                                    $badgeVariant = match($user->role->value) {
+                                    $badgeVariant = match ($user->role->value) {
                                         'superadmin' => 'primary',
                                         'admin' => 'warning',
                                         'student' => 'info',
@@ -91,11 +84,8 @@
                             <x-table.cell>
                                 <div class="flex items-center justify-center gap-2">
                                     @can('update', $user)
-                                        <x-ui.button 
-                                            variant="success" 
-                                            size="sm"
-                                            href="{{ route('users.edit', $user) }}"
-                                        >
+                                        <x-ui.button variant="success" size="sm"
+                                            href="{{ route('users.edit', $user) }}">
                                             <x-slot:icon>
                                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -107,20 +97,8 @@
                                     @endcan
 
                                     @can('delete', $user)
-                                        <x-ui.button 
-                                            variant="danger" 
-                                            size="sm"
-                                            wire:click="deleteUser({{ $user->id }})"
-                                            wire:confirm="Are you sure you want to delete this user?"
-                                        >
-                                            <x-slot:icon>
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </x-slot:icon>
-                                            Delete
-                                        </x-ui.button>
+                                        <x-ui.delete-button :id="$user->id" :name="$user->full_name" resource="User"
+                                            wire="deleteUser" />
                                     @endcan
                                 </div>
                             </x-table.cell>
@@ -129,8 +107,10 @@
                         <x-table.row>
                             <x-table.cell colspan="4" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center">
-                                    <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                    <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                                     </svg>
                                     <p class="text-gray-500 font-medium">No users found</p>
                                     <p class="text-gray-400 text-sm mt-1">Try adjusting your search or filters</p>

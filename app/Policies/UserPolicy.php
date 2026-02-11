@@ -65,20 +65,4 @@ class UserPolicy
 
         return false;
     }
-
-    /**
-     * Determine if the user can restore the user.
-     */
-    public function restore(User $user, User $model): bool
-    {
-        return $user->isSuperAdmin();
-    }
-
-    /**
-     * Determine if the user can permanently delete the user.
-     */
-    public function forceDelete(User $user, User $model): bool
-    {
-        return $user->isSuperAdmin();
-    }
 }

@@ -4,6 +4,7 @@ namespace App\Livewire\Users;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\Notification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -50,20 +51,25 @@ class TablePage extends Component
 
             $this->authorize('delete', $user);
 
+            $userName = $user->full_name;
+
             $user->delete();
 
-            $this->dispatch('notify', 
-                message: 'User deleted successfully.', 
+            $this->dispatch(
+                'notify',
+                message: "{$userName} has been deleted successfully.",
                 type: 'success'
             );
         } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch('notify', 
-                message: 'You do not have permission to delete this user.', 
+            $this->dispatch(
+                'notify',
+                message: 'You do not have permission to delete this user.',
                 type: 'error'
             );
         } catch (\Exception $e) {
-            $this->dispatch('notify', 
-                message: 'An error occurred while deleting the user.', 
+            $this->dispatch(
+                'notify',
+                message: 'An error occurred while deleting the user. Please try again.',
                 type: 'error'
             );
         }
@@ -94,11 +100,10 @@ class TablePage extends Component
 
     private function getRoles(): array
     {
-        return [
-            '' => 'All Roles',
-            UserRole::STUDENT->value => 'Students',
-            UserRole::ADMIN->value => 'Admins',
-            UserRole::SUPERADMIN->value => 'Super Admins',
-        ];
+        return array_reduce(
+            UserRole::cases(),
+            fn($carry, $role) => $carry + [$role->value => $role->label()],
+            ['' => 'All Roles']
+        );
     }
 }

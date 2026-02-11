@@ -5,24 +5,34 @@
     progress: 100,
     interval: null,
     init() {
+        @if(session()->has('notify'))
+            this.showNotification(
+                '{{ session('notify.message') }}',
+                '{{ session('notify.type', 'success') }}'
+            );
+        @endif
+
         Livewire.on('notify', (event) => {
-            this.message = event.message;
-            this.type = event.type || 'success';
-            this.show = true;
-            this.progress = 100;
-
-            if (this.interval) clearInterval(this.interval);
-
-            const duration = 2500;
-            const step = 100 / (duration / 50);
-            this.interval = setInterval(() => {
-                this.progress -= step;
-                if (this.progress <= 0) {
-                    this.show = false;
-                    clearInterval(this.interval);
-                }
-            }, 50);
+            this.showNotification(event.message, event.type || 'success');
         });
+    },
+    showNotification(message, type) {
+        this.message = message;
+        this.type = type;
+        this.show = true;
+        this.progress = 100;
+
+        if (this.interval) clearInterval(this.interval);
+
+        const duration = 2500;
+        const step = 100 / (duration / 50);
+        this.interval = setInterval(() => {
+            this.progress -= step;
+            if (this.progress <= 0) {
+                this.show = false;
+                clearInterval(this.interval);
+            }
+        }, 50);
     }
 }" x-show="show" x-transition:enter="transition ease-out duration-300 transform"
     x-transition:enter-start="opacity-0 translate-x-full scale-95"
