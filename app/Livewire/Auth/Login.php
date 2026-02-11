@@ -35,7 +35,7 @@ class Login extends Component
                 type: 'success'
             );
 
-            return $this->redirect(session()->pull('url.intended', '/'), navigate: true);
+            return $this->redirect(session()->pull('url.intended', '/'), navigate: false);
 
         } catch (ValidationException $e) {
             $this->dispatch('notify', 
