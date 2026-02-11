@@ -2,41 +2,68 @@
 
 namespace App\Livewire\Categories;
 
-use Livewire\Component;
 use App\Models\Category;
+use App\Services\RedirectNotification;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 #[Layout("components.layouts.app")]
 class CreatePage extends Component
 {
-    #[Validate('required|string|max:255')]
-    public $name = '';
-    
-    #[Validate('nullable|string|max:500')]
-    public $description = '';
-    
-    #[Validate('nullable|string|max:255|unique:categories,slug')]
-    public $slug = '';
-    
-    #[Validate('boolean')]
-    public $is_active = true;
+    use AuthorizesRequests;
 
-    public function updatedName()
+    public string $name = '';
+    public string $description = '';
+
+    public function mount(): void
     {
-        // Auto-generate slug from name
-        $this->slug = \Illuminate\Support\Str::slug($this->name);
+        $this->authorize('create', Category::class);
     }
 
-    public function save()
+    public function rules(): array
     {
+        return [
+            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
+            'description' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Category name is required.',
+            'name.max' => 'Category name must not exceed 255 characters.',
+            'name.unique' => 'This category name already exists.',
+            'description.max' => 'Description must not exceed 1000 characters.',
+        ];
+    }
+
+    public function save(): void
+    {
+        $this->authorize('create', Category::class);
+
         $validated = $this->validate();
-        
-        Category::create($validated);
-        
-        session()->flash('success', 'Category created successfully!');
-        
-        return redirect()->route('categories.index');
+
+        try {
+            Category::create([
+                'name' => $validated['name'],
+                'description' => $validated['description'],
+                'created_by' => auth()->id(),
+                'slug' => Str::slug($validated['name'])
+            ]);
+
+            RedirectNotification::success('Category created successfully!');
+
+            $this->redirect(route('categories.index'), navigate: true);
+        } catch (\Exception $e) {
+            $this->dispatch(
+                'notify',
+                message: 'An error occurred while creating the category.' . $e->getMessage(),
+                type: 'error'
+            );
+        }
     }
 
     public function render()

@@ -2,61 +2,66 @@
 
 namespace App\Livewire\Categories;
 
-use Livewire\Component;
-use Livewire\WithPagination;
 use App\Models\Category;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout("components.layouts.app")]
 class TablePage extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     #[Url(as: 'q')]
-    public $search = '';
-    
-    #[Url]
-    public $status = '';
-    
-    #[Url]
-    public $perPage = 10;
-    
-    #[Url]
-    public $sortBy = 'created_at';
-    
-    #[Url]
-    public $sortDirection = 'desc';
+    public string $search = '';
 
-    public function updatingSearch()
+    public int $perPage = 10;
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+    ];
+
+    public function mount(): void
+    {
+        $this->authorize('viewAny', Category::class);
+    }
+
+    public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    public function sortByColumn($column)
+    public function deleteCategory(int $categoryId): void
     {
-        if ($this->sortBy === $column) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortBy = $column;
-            $this->sortDirection = 'asc';
+        try {
+            $category = Category::findOrFail($categoryId);
+
+            $this->authorize('delete', $category);
+
+            $categoryName = $category->name;
+
+            $category->delete();
+
+            $this->dispatch(
+                'notify',
+                message: "{$categoryName} has been deleted successfully.",
+                type: 'success'
+            );
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $this->dispatch(
+                'notify',
+                message: 'You do not have permission to delete this category.',
+                type: 'error'
+            );
+        } catch (\Exception $e) {
+            $this->dispatch(
+                'notify',
+                message: 'An error occurred while deleting the category. Please try again.',
+                type: 'error'
+            );
         }
-    }
-
-    public function delete($id)
-    {
-        $category = Category::findOrFail($id);
-        $category->delete();
-        
-        session()->flash('success', 'Category deleted successfully!');
-    }
-
-    public function toggleStatus($id)
-    {
-        $category = Category::findOrFail($id);
-        $category->update(['is_active' => !$category->is_active]);
-        
-        session()->flash('success', 'Category status updated!');
     }
 
     public function render()
@@ -65,18 +70,14 @@ class TablePage extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('slug', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%');
+                        ->orWhere('description', 'like', '%' . $this->search . '%');
                 });
             })
-            ->when($this->status !== '', function ($query) {
-                $query->where('is_active', $this->status);
-            })
-            ->orderBy($this->sortBy, $this->sortDirection)
+            ->latest()
             ->paginate($this->perPage);
 
         return view('livewire.categories.table-page', [
-            'categories' => $categories
+            'categories' => $categories,
         ]);
     }
 }

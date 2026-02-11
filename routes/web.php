@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix("categories")->group(function () {
           Route::get('', \App\Livewire\Categories\TablePage::class)->name('categories.index');
         Route::get('/create', \App\Livewire\Categories\CreatePage::class)->name('categories.create');
-        Route::get('/{user}/edit', \App\Livewire\Categories\UpdatePage::class)->name('categories.edit');
+        Route::get('/{category}/edit', \App\Livewire\Categories\UpdatePage::class)->name('categories.edit');
     });
 
     Route::prefix("uploads")->group(function () {
