@@ -11,10 +11,10 @@
 
     <div class="flex items-center justify-center h-20 border-b border-red-900 flex-shrink-0">
         <div class="flex items-center space-x-3">
-            <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586l5.414 5.414V19a2 2 0 01-2 2z" />
-            </svg>
+            <img src="{{ asset('images/logo.jpg') }}" 
+                 alt="EVSU Logo" 
+                 class="w-12 h-12"
+                 style="border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
             <span x-show="!sidebarCollapsed" x-transition class="text-2xl font-bold">
                 DocHub
             </span>
