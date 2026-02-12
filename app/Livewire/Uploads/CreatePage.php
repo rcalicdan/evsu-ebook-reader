@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 #[Layout("components.layouts.app")]
@@ -25,6 +26,8 @@ class CreatePage extends Component
     public ?int $category_id = null;
     public string $visibility = '';
     public string $status = '';
+
+    /** @var TemporaryUploadedFile|null */
     public $file;
 
     public function mount(): void
@@ -70,31 +73,44 @@ class CreatePage extends Component
         $validated = $this->validate();
 
         try {
-            $filePath = Storage::disk('public')->putFile('documents', $this->file);
+            $extension = $this->file->guessExtension();
 
-            $baseSlug = Str::slug($validated['title']);
-            $timestamp = now()->format('YmdHis');
+            if ($extension !== 'pdf') {
+                throw new \RuntimeException('Invalid file type. Only PDF files are allowed.');
+            }
+
+            $baseSlug   = Str::slug($validated['title']);
+            $timestamp  = now()->format('YmdHis');
             $uniqueSlug = $baseSlug . '-' . $timestamp;
+            $fileName   = $uniqueSlug . '.' . $extension;
+
+            $filePath = Storage::disk('public')->putFileAs('documents', $this->file, $fileName);
 
             Document::create([
-                'title' => $validated['title'],
-                'slug' => $uniqueSlug,
+                'title'       => $validated['title'],
+                'slug'        => $uniqueSlug,
                 'description' => $validated['description'],
-                'file_url' => $filePath,
+                'file_url'    => $filePath,
                 'uploaded_by' => auth()->id(),
                 'category_id' => $validated['category_id'],
-                'visibility' => $validated['visibility'],
-                'status' => $validated['status'],
-                'view_count' => 0,
+                'visibility'  => $validated['visibility'],
+                'status'      => $validated['status'],
+                'view_count'  => 0,
             ]);
 
             RedirectNotification::success('Document uploaded successfully!');
 
             $this->redirect(route('documents.index'), navigate: true);
+        } catch (\RuntimeException $e) {
+            $this->dispatch(
+                'notify',
+                message: $e->getMessage(),
+                type: 'error'
+            );
         } catch (\Exception $e) {
             $this->dispatch(
                 'notify',
-                message: 'An error occurred while uploading the document. ' . $e->getMessage(),
+                message: 'An error occurred while uploading the document.',
                 type: 'error'
             );
         }

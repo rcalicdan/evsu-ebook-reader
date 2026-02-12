@@ -66,10 +66,11 @@ class TablePage extends Component
 
     public function deleteDocument(int $documentId): void
     {
-        $document = Document::findOrFail($documentId);
-        $this->authorize('delete', $document);
-
         try {
+            $document = Document::findOrFail($documentId);
+
+            $this->authorize('delete', $document);
+
             $documentTitle = $document->title;
 
             if ($document->file_url && Storage::disk('public')->exists($document->file_url)) {
@@ -82,6 +83,12 @@ class TablePage extends Component
                 'notify',
                 message: "{$documentTitle} has been deleted successfully.",
                 type: 'success'
+            );
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $this->dispatch(
+                'notify',
+                message: 'You do not have permission to delete this document.',
+                type: 'error'
             );
         } catch (\Exception $e) {
             $this->dispatch(

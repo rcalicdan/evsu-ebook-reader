@@ -9,11 +9,11 @@ use App\Models\Document;
 use App\Services\RedirectNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 #[Layout("components.layouts.app")]
 class UpdatePage extends Component
@@ -27,6 +27,8 @@ class UpdatePage extends Component
     public ?int $category_id = null;
     public string $visibility = '';
     public string $status = '';
+
+    /** @var TemporaryUploadedFile|null */
     public $file;
 
     public function mount(Document $document): void
@@ -77,7 +79,6 @@ class UpdatePage extends Component
         try {
             $updateData = [
                 'title'       => $validated['title'],
-                'slug'        => Str::slug($validated['title']),
                 'description' => $validated['description'],
                 'category_id' => $validated['category_id'],
                 'visibility'  => $validated['visibility'],
@@ -85,11 +86,19 @@ class UpdatePage extends Component
             ];
 
             if ($this->file) {
+                $extension = $this->file->guessExtension();
+
+                if ($extension !== 'pdf') {
+                    throw new \RuntimeException('Invalid file type. Only PDF files are allowed.');
+                }
+
                 if ($this->document->file_url && Storage::disk('public')->exists($this->document->file_url)) {
                     Storage::disk('public')->delete($this->document->file_url);
                 }
 
-                $updateData['file_url'] = Storage::disk('public')->putFile('documents', $this->file);
+                $fileName = $this->document->slug . '.' . $extension;
+
+                $updateData['file_url'] = Storage::disk('public')->putFileAs('documents', $this->file, $fileName);
             }
 
             $this->document->update($updateData);
@@ -97,6 +106,12 @@ class UpdatePage extends Component
             RedirectNotification::success('Document updated successfully!');
 
             $this->redirect(route('documents.index'), navigate: true);
+        } catch (\RuntimeException $e) {
+            $this->dispatch(
+                'notify',
+                message: $e->getMessage(),
+                type: 'error'
+            );
         } catch (\Exception $e) {
             $this->dispatch(
                 'notify',
