@@ -418,4 +418,5 @@
     border-color: rgba(255, 255, 255, 0.6);
     transform: scale(1.05);
 }
+
 </style>
