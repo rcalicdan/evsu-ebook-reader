@@ -34,6 +34,11 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix("documents")->group(function () {
-        Route::get('', \App\Livewire\Dashboard\HomePage::class)->name('documents.index');
+        Route::get('', \App\Livewire\Documents\TablePage::class)->name('documents.index');
+        Route::get('edit', \App\Livewire\Documents\UpdatePage::class)->name('documents.edit');
+    });
+
+      Route::prefix("documents")->group(function () {
+        
     });
 });
