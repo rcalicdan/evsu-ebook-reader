@@ -8,7 +8,9 @@ use App\Models\Category;
 use App\Models\Document;
 use App\Services\RedirectNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -28,8 +30,7 @@ class CreatePage extends Component
     public function mount(): void
     {
         $this->authorize('create', Document::class);
-        
-        // Set default values
+
         $this->visibility = DocumentVisibility::PUBLIC->value;
         $this->status = DocumentStatus::ACTIVE->value;
     }
@@ -40,9 +41,9 @@ class CreatePage extends Component
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'category_id' => ['required', 'exists:categories,id'],
-            'visibility' => ['required', 'in:' . implode(',', DocumentVisibility::values())],
-            'status' => ['required', 'in:' . implode(',', DocumentStatus::values())],
-            'file' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:10240'], // 10MB max
+            'visibility' => ['required', Rule::enum(DocumentVisibility::class)],
+            'status'     => ['required', Rule::enum(DocumentStatus::class)],
+            'file' => ['required', 'file', 'mimes:pdf', 'max:102400'],
         ];
     }
 
@@ -57,8 +58,8 @@ class CreatePage extends Component
             'visibility.required' => 'Please select a visibility option.',
             'status.required' => 'Please select a status.',
             'file.required' => 'Please upload a file.',
-            'file.mimes' => 'File must be a PDF, Word, Excel, PowerPoint, text, or image file.',
-            'file.max' => 'File size must not exceed 10MB.',
+            'file.mimes' => 'File must be a PDF document.',
+            'file.max' => 'File size must not exceed 100MB.',
         ];
     }
 
@@ -69,12 +70,15 @@ class CreatePage extends Component
         $validated = $this->validate();
 
         try {
-            // Store the file
-            $filePath = $this->file->store('documents', 'public');
+            $filePath = Storage::disk('public')->putFile('documents', $this->file);
+
+            $baseSlug = Str::slug($validated['title']);
+            $timestamp = now()->format('YmdHis');
+            $uniqueSlug = $baseSlug . '-' . $timestamp;
 
             Document::create([
                 'title' => $validated['title'],
-                'slug' => Str::slug($validated['title']),
+                'slug' => $uniqueSlug,
                 'description' => $validated['description'],
                 'file_url' => $filePath,
                 'uploaded_by' => auth()->id(),
@@ -99,7 +103,7 @@ class CreatePage extends Component
     public function render()
     {
         $categories = Category::orderBy('name')->get();
-        
+
         return view('livewire.uploads.create-page', [
             'categories' => $categories,
             'visibilityOptions' => DocumentVisibility::cases(),
