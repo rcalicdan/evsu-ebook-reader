@@ -11,6 +11,7 @@
             display: none !important;
         }
     </style>
+    @stack('styles')
     @livewireStyles
 </head>
 

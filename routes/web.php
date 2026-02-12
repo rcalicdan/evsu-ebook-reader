@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Profile\Settings;
+use App\Http\Controllers\DocumentPreviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -34,7 +35,13 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix("documents")->group(function () {
         Route::get('', \App\Livewire\Documents\TablePage::class)->name('documents.index');
+
+        Route::get('preview/{document}', [DocumentPreviewController::class, 'index'])
+            ->middleware('throttle:60,1')
+            ->name('documents.preview');
+
+        Route::get('edit/{document}', \App\Livewire\Documents\UpdatePage::class)->name('documents.edit');
+
         Route::get('{document}', \App\Livewire\Documents\ShowPage::class)->name('documents.show');
-        Route::get('{document}/edit', \App\Livewire\Documents\UpdatePage::class)->name('documents.edit');
     });
 });

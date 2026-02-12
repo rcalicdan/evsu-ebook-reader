@@ -12,7 +12,6 @@ class CategoryPolicy
      */
     public function viewAny(User $user): bool
     {
-        // All authenticated users can view the categories list
        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
@@ -21,7 +20,6 @@ class CategoryPolicy
      */
     public function view(User $user, Category $category): bool
     {
-        // All authenticated users can view individual categories
        return $user->isAdmin() || $user->isSuperAdmin();
     }
 
@@ -30,7 +28,6 @@ class CategoryPolicy
      */
     public function create(User $user): bool
     {
-        // Only superadmins and admins can create categories
         return $user->isSuperAdmin() || $user->isAdmin();
     }
 
@@ -39,7 +36,6 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): bool
     {
-        // Only superadmins and admins can update categories
         return $user->isSuperAdmin() || $user->isAdmin();
     }
 
@@ -48,7 +44,6 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): bool
     {
-        // Only superadmins and admins can delete categories
         return $user->isSuperAdmin() || $user->isAdmin();
     }
 
@@ -57,7 +52,6 @@ class CategoryPolicy
      */
     public function restore(User $user, Category $category): bool
     {
-        // Only superadmins can restore deleted categories
         return $user->isSuperAdmin();
     }
 
@@ -66,7 +60,6 @@ class CategoryPolicy
      */
     public function forceDelete(User $user, Category $category): bool
     {
-        // Only superadmins can force delete categories
         return $user->isSuperAdmin();
     }
 }
