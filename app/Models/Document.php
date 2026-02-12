@@ -88,4 +88,9 @@ class Document extends Model
     {
         return $this->favorites()->where('user_id', $user->id)->exists();
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

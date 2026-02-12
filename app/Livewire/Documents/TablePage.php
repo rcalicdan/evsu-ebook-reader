@@ -4,6 +4,7 @@ namespace App\Livewire\Documents;
 
 use App\Enums\DocumentStatus;
 use App\Enums\DocumentVisibility;
+use App\Models\Category;
 use App\Models\Document;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
@@ -65,14 +66,12 @@ class TablePage extends Component
 
     public function deleteDocument(int $documentId): void
     {
+        $document = Document::findOrFail($documentId);
+        $this->authorize('delete', $document);
+
         try {
-            $document = Document::findOrFail($documentId);
-
-            $this->authorize('delete', $document);
-
             $documentTitle = $document->title;
 
-            // Delete the file from storage
             if ($document->file_url && Storage::disk('public')->exists($document->file_url)) {
                 Storage::disk('public')->delete($document->file_url);
             }
@@ -83,12 +82,6 @@ class TablePage extends Component
                 'notify',
                 message: "{$documentTitle} has been deleted successfully.",
                 type: 'success'
-            );
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
-            $this->dispatch(
-                'notify',
-                message: 'You do not have permission to delete this document.',
-                type: 'error'
             );
         } catch (\Exception $e) {
             $this->dispatch(
@@ -121,7 +114,7 @@ class TablePage extends Component
             ->latest()
             ->paginate($this->perPage);
 
-        $categories = \App\Models\Category::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
 
         return view('livewire.documents.table-page', [
             'documents' => $documents,

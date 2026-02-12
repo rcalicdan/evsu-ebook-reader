@@ -10,6 +10,7 @@ use App\Services\RedirectNotification;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -27,7 +28,6 @@ class UpdatePage extends Component
     public string $visibility = '';
     public string $status = '';
     public $file;
-    public bool $replaceFile = false;
 
     public function mount(Document $document): void
     {
@@ -44,27 +44,27 @@ class UpdatePage extends Component
     public function rules(): array
     {
         return [
-            'title' => ['required', 'string', 'max:255'],
+            'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'category_id' => ['required', 'exists:categories,id'],
-            'visibility' => ['required', 'in:' . implode(',', DocumentVisibility::values())],
-            'status' => ['required', 'in:' . implode(',', DocumentStatus::values())],
-            'file' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png', 'max:10240'],
+            'visibility'  => ['required', Rule::enum(DocumentVisibility::class)],
+            'status'      => ['required', Rule::enum(DocumentStatus::class)],
+            'file'        => ['nullable', 'file', 'mimes:pdf', 'max:102400'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'title.required' => 'Document title is required.',
-            'title.max' => 'Document title must not exceed 255 characters.',
-            'description.max' => 'Description must not exceed 1000 characters.',
+            'title.required'       => 'Document title is required.',
+            'title.max'            => 'Document title must not exceed 255 characters.',
+            'description.max'      => 'Description must not exceed 1000 characters.',
             'category_id.required' => 'Please select a category.',
-            'category_id.exists' => 'Selected category does not exist.',
-            'visibility.required' => 'Please select a visibility option.',
-            'status.required' => 'Please select a status.',
-            'file.mimes' => 'File must be a PDF, Word, Excel, PowerPoint, text, or image file.',
-            'file.max' => 'File size must not exceed 10MB.',
+            'category_id.exists'   => 'Selected category does not exist.',
+            'visibility.required'  => 'Please select a visibility option.',
+            'status.required'      => 'Please select a status.',
+            'file.mimes'           => 'File must be a PDF.',
+            'file.max'             => 'File size must not exceed 100MB.',
         ];
     }
 
@@ -76,24 +76,20 @@ class UpdatePage extends Component
 
         try {
             $updateData = [
-                'title' => $validated['title'],
-                'slug' => Str::slug($validated['title']),
+                'title'       => $validated['title'],
+                'slug'        => Str::slug($validated['title']),
                 'description' => $validated['description'],
                 'category_id' => $validated['category_id'],
-                'visibility' => $validated['visibility'],
-                'status' => $validated['status'],
+                'visibility'  => $validated['visibility'],
+                'status'      => $validated['status'],
             ];
 
-            // Handle file replacement if a new file is uploaded
             if ($this->file) {
-                // Delete old file
                 if ($this->document->file_url && Storage::disk('public')->exists($this->document->file_url)) {
                     Storage::disk('public')->delete($this->document->file_url);
                 }
 
-                // Store new file
-                $filePath = $this->file->store('documents', 'public');
-                $updateData['file_url'] = $filePath;
+                $updateData['file_url'] = Storage::disk('public')->putFile('documents', $this->file);
             }
 
             $this->document->update($updateData);
@@ -113,11 +109,11 @@ class UpdatePage extends Component
     public function render()
     {
         $categories = Category::orderBy('name')->get();
-        
+
         return view('livewire.documents.update-page', [
-            'categories' => $categories,
+            'categories'        => $categories,
             'visibilityOptions' => DocumentVisibility::cases(),
-            'statusOptions' => DocumentStatus::cases(),
+            'statusOptions'     => DocumentStatus::cases(),
         ]);
     }
 }
