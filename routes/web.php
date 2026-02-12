@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix("uploads")->group(function () {
-        Route::get('', \App\Livewire\Dashboard\HomePage::class)->name('uploads.index');
+        Route::get('', \App\Livewire\Uploads\CreatePage::class)->name('uploads.index');
     });
 
     Route::prefix("documents")->group(function () {
