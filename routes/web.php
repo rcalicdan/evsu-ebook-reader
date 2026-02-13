@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', Settings::class)->name('profile');
 
     Route::prefix("/")->group(function () {
-        Route::get('', \App\Livewire\Dashboard\HomePage::class)->name('dashboard.index');
+        Route::get('', \App\Livewire\Dashboard\IndexPage::class)->name('dashboard.index');
     });
 
     Route::prefix("categories")->group(function () {

@@ -6,10 +6,10 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('components.layouts.app')]
-class HomePage extends Component
+class IndexPage extends Component
 {
     public function render()
     {
-        return view('livewire.dashboard.home-page');
+        return view('livewire.dashboard.index-page');
     }
 }
