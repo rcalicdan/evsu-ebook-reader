@@ -143,7 +143,7 @@
                             <x-table.cell>
                                 <div class="flex items-center justify-center gap-2">
                                     <!-- View Button -->
-                                    <a href="{{ route('documents.show', $document) }}"
+                                    <a wire:navigate href="{{ route('documents.show', $document) }}"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">

@@ -1,5 +1,4 @@
 <div class="space-y-6">
-    <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -32,7 +31,8 @@
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
@@ -62,7 +62,7 @@
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-university-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
@@ -75,7 +75,8 @@
     </div>
 
     <!-- Document Uploads Chart -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
+    <!-- Added x-data to initialize the Alpine component -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6" x-data="documentUploadsChart()">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <h3 class="text-lg font-bold text-gray-900">Document Uploads</h3>
@@ -86,10 +87,11 @@
                 <p class="text-2xl font-bold text-gray-900">156</p>
             </div>
         </div>
-        
+
         <!-- Chart Canvas -->
         <div class="relative" style="height: 300px;">
-            <canvas id="uploadsChart"></canvas>
+            <!-- Removed ID, added x-ref for Alpine access -->
+            <canvas x-ref="chartCanvas"></canvas>
         </div>
     </div>
 
@@ -98,7 +100,7 @@
         <!-- Document Status -->
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Document Status</h3>
-            
+
             <div class="space-y-4">
                 <!-- Published -->
                 <div>
@@ -147,7 +149,7 @@
         <!-- Top Categories -->
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Top Categories</h3>
-            
+
             <div class="space-y-4">
                 <!-- Category 1 -->
                 <div class="flex items-center gap-3">
@@ -216,7 +218,7 @@
                 <!-- Category 5 -->
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-university-red">5</span>
+                        <span class="text-sm font-bold text-red-600">5</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between mb-1">
@@ -224,7 +226,7 @@
                             <span class="text-sm font-bold text-gray-900">134</span>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-university-red h-1.5 rounded-full" style="width: 35%"></div>
+                            <div class="bg-red-600 h-1.5 rounded-full" style="width: 35%"></div>
                         </div>
                     </div>
                 </div>
@@ -236,11 +238,11 @@
     <div class="bg-white rounded-lg border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
-            <a href="#" class="text-sm font-medium text-university-red hover:text-university-red/80">
+            <a href="#" class="text-sm font-medium text-red-600 hover:text-red-700">
                 View all
             </a>
         </div>
-        
+
         <div class="space-y-3">
             <!-- Activity 1 -->
             <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
@@ -306,7 +308,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="bg-gradient-to-r from-university-red to-red-700 rounded-lg p-8">
+    <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-lg p-8">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
             <div class="text-white text-center md:text-left">
                 <h3 class="text-xl font-bold mb-1">Ready to add new documents?</h3>
@@ -314,7 +316,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('documents.index') }}"
-                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-university-red font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-red-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -329,94 +331,4 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('uploadsChart').getContext('2d');
-    
-    // Generate static data for 30 days
-    const labels = [];
-    const data = [];
-    const today = new Date();
-    
-    // Static upload data for past 30 days
-    const staticData = [3, 5, 2, 7, 4, 6, 8, 3, 5, 9, 4, 6, 7, 5, 8, 3, 6, 4, 9, 7, 5, 8, 6, 4, 7, 9, 5, 8, 6, 10];
-    
-    for (let i = 29; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(date.getDate() - i);
-        labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
-        data.push(staticData[29 - i]);
-    }
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Documents Uploaded',
-                data: data,
-                borderColor: 'rgb(185, 28, 28)',
-                backgroundColor: 'rgba(185, 28, 28, 0.1)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 2,
-                pointHoverRadius: 5,
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    padding: 12,
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(context) {
-                            return context[0].label;
-                        },
-                        label: function(context) {
-                            return context.parsed.y + ' documents uploaded';
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45,
-                        font: {
-                            size: 10
-                        }
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(0, 0, 0, 0.05)'
-                    },
-                    ticks: {
-                        stepSize: 2,
-                        font: {
-                            size: 11
-                        }
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
+@include("livewire.dashboard.scripts")
