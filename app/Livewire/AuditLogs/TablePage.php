@@ -16,13 +16,13 @@ class TablePage extends Component
     public string $search = '';
     public string $eventFilter = '';
     public string $auditableTypeFilter = '';
-    public string $userFilter = '';
+    public string $dateFilter = '';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'eventFilter' => ['except' => ''],
         'auditableTypeFilter' => ['except' => ''],
-        'userFilter' => ['except' => ''],
+        'dateFilter' => ['except' => ''],
     ];
 
     public function mount(): void
@@ -45,7 +45,7 @@ class TablePage extends Component
         $this->resetPage();
     }
 
-    public function updatingUserFilter(): void
+    public function updatingDateFilter(): void
     {
         $this->resetPage();
     }
@@ -59,7 +59,6 @@ class TablePage extends Component
                     $q->where('event', 'like', "%{$this->search}%")
                         ->orWhere('auditable_type', 'like', "%{$this->search}%")
                         ->orWhere('message', 'like', "%{$this->search}%")
-                        ->orWhere('ip_address', 'like', "%{$this->search}%")
                         ->orWhereHas('user', function ($q) {
                             $q->where('first_name', 'like', "%{$this->search}%")
                                 ->orWhere('last_name', 'like', "%{$this->search}%")
@@ -73,8 +72,18 @@ class TablePage extends Component
             ->when($this->auditableTypeFilter, function ($query) {
                 $query->where('auditable_type', $this->auditableTypeFilter);
             })
-            ->when($this->userFilter, function ($query) {
-                $query->where('user_id', $this->userFilter);
+            ->when($this->dateFilter, function ($query) {
+                match ($this->dateFilter) {
+                    'today' => $query->whereDate('created_at', today()),
+                    'yesterday' => $query->whereDate('created_at', today()->subDay()),
+                    'last_7_days' => $query->where('created_at', '>=', now()->subDays(7)),
+                    'last_30_days' => $query->where('created_at', '>=', now()->subDays(30)),
+                    'this_month' => $query->whereMonth('created_at', now()->month)
+                        ->whereYear('created_at', now()->year),
+                    'last_month' => $query->whereMonth('created_at', now()->subMonth()->month)
+                        ->whereYear('created_at', now()->subMonth()->year),
+                    default => null,
+                };
             })
             ->latest()
             ->paginate(15);
@@ -94,15 +103,10 @@ class TablePage extends Component
                 'label' => class_basename($type)
             ]);
 
-        $users = \App\Models\User::select('id', 'first_name', 'last_name', 'email')
-            ->orderBy('first_name')
-            ->get();
-
         return view('livewire.audit-logs.table-page', [
             'auditLogs' => $auditLogs,
             'events' => $events,
             'auditableTypes' => $auditableTypes,
-            'users' => $users,
         ]);
     }
 }

@@ -15,14 +15,17 @@ class AuditLog extends Model
         'new_values',
         'message',
         'user_id',
+        'branch_id',
         'ip_address',
         'user_agent',
         'url',
+        'additional_data',
     ];
 
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
+        'additional_data' => 'array',
     ];
 
     public function auditable()
@@ -33,5 +36,15 @@ class AuditLog extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getFormattedEventAttribute(): string
+    {
+        return ucfirst($this->event);
+    }
+
+    public function getAuditableTypeNameAttribute(): string
+    {
+        return class_basename($this->auditable_type);
     }
 }

@@ -43,13 +43,16 @@
                         @endforeach
                     </select>
 
-                    <!-- User Filter -->
-                    <select wire:model.live="userFilter"
-                        class="w-full md:w-40 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 focus:ring-2 focus:ring-university-red/20 focus:border-university-red outline-none transition-all">
-                        <option value="">All Users</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->full_name }}</option>
-                        @endforeach
+                    <!-- Date Filter -->
+                    <select wire:model.live="dateFilter"
+                        class="w-full md:w-36 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-600 focus:ring-2 focus:ring-university-red/20 focus:border-university-red outline-none transition-all">
+                        <option value="">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last_7_days">Last 7 Days</option>
+                        <option value="last_30_days">Last 30 Days</option>
+                        <option value="this_month">This Month</option>
+                        <option value="last_month">Last Month</option>
                     </select>
                 </div>
             </div>
@@ -64,7 +67,6 @@
                     <x-table.cell header>Model</x-table.cell>
                     <x-table.cell header>User</x-table.cell>
                     <x-table.cell header>Changes</x-table.cell>
-                    <x-table.cell header>IP Address</x-table.cell>
                     <x-table.cell header class="text-center">Date</x-table.cell>
                     <x-table.cell header class="text-center">Actions</x-table.cell>
                 </x-table.head>
@@ -138,12 +140,6 @@
                             </x-table.cell>
 
                             <x-table.cell>
-                                <span class="text-xs text-gray-600 font-mono">
-                                    {{ $log->ip_address ?? 'N/A' }}
-                                </span>
-                            </x-table.cell>
-
-                            <x-table.cell>
                                 <div class="text-center">
                                     <p class="text-xs text-gray-500">{{ $log->created_at->format('M d, Y') }}</p>
                                     <p class="text-xs text-gray-400">{{ $log->created_at->format('g:i A') }}</p>
@@ -158,7 +154,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="8" class="text-center py-12">
+                            <x-table.cell colspan="7" class="text-center py-12">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
