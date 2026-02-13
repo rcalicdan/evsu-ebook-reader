@@ -20,9 +20,15 @@
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 </div>
-                <span class="text-xs text-green-600 font-medium">+12.5%</span>
+                @if ($documentsGrowth > 0)
+                    <span class="text-xs text-green-600 font-medium">+{{ $documentsGrowth }}%</span>
+                @elseif($documentsGrowth < 0)
+                    <span class="text-xs text-red-600 font-medium">{{ $documentsGrowth }}%</span>
+                @else
+                    <span class="text-xs text-gray-600 font-medium">0%</span>
+                @endif
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">1,247</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ number_format($totalDocuments) }}</h3>
             <p class="text-sm text-gray-500 mt-1">Total Documents</p>
         </div>
 
@@ -37,9 +43,8 @@
                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                 </div>
-                <span class="text-xs text-green-600 font-medium">+8.3%</span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">45,892</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ number_format($totalViews) }}</h3>
             <p class="text-sm text-gray-500 mt-1">Total Views</p>
         </div>
 
@@ -54,7 +59,7 @@
                 </div>
                 <span class="text-xs text-gray-600 font-medium">All active</span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">24</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ $activeCategories }}</h3>
             <p class="text-sm text-gray-500 mt-1">Active Categories</p>
         </div>
 
@@ -67,9 +72,8 @@
                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                 </div>
-                <span class="text-xs text-green-600 font-medium">+23.1%</span>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900">156</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ number_format($newThisMonth) }}</h3>
             <p class="text-sm text-gray-500 mt-1">New This Month</p>
         </div>
     </div>
@@ -80,136 +84,85 @@
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Document Status</h3>
 
-            <div class="space-y-4">
-                <!-- Published -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <span class="text-sm font-medium text-gray-700">Published</span>
+            @if ($totalDocuments > 0)
+                <div class="space-y-4">
+                    <!-- Active -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-700">Active</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ number_format($activeCount) }}
+                                ({{ $activePercentage }}%)</span>
                         </div>
-                        <span class="text-sm font-bold text-gray-900">892 (71.5%)</span>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: {{ $activePercentage }}%"></div>
+                        </div>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-green-500 h-2 rounded-full" style="width: 71.5%"></div>
-                    </div>
-                </div>
 
-                <!-- Draft -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                            <span class="text-sm font-medium text-gray-700">Draft</span>
+                    <!-- Archived -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-gray-700">Archived</span>
+                            </div>
+                            <span class="text-sm font-bold text-gray-900">{{ number_format($archivedCount) }}
+                                ({{ $archivedPercentage }}%)</span>
                         </div>
-                        <span class="text-sm font-bold text-gray-900">234 (18.8%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 18.8%"></div>
+                        <div class="w-full bg-gray-100 rounded-full h-2">
+                            <div class="bg-red-500 h-2 rounded-full" style="width: {{ $archivedPercentage }}%"></div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Archived -->
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                            <span class="text-sm font-medium text-gray-700">Archived</span>
-                        </div>
-                        <span class="text-sm font-bold text-gray-900">121 (9.7%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 rounded-full h-2">
-                        <div class="bg-red-500 h-2 rounded-full" style="width: 9.7%"></div>
-                    </div>
+            @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500 text-sm">No documents available</p>
                 </div>
-            </div>
+            @endif
         </div>
 
         <!-- Top Categories -->
         <div class="bg-white rounded-lg border border-gray-200 p-6">
             <h3 class="text-lg font-bold text-gray-900 mb-4">Top Categories</h3>
 
-            <div class="space-y-4">
-                <!-- Category 1 -->
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-blue-600">1</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-gray-900">Academic Resources</span>
-                            <span class="text-sm font-bold text-gray-900">324</span>
+            @if ($topCategories->isNotEmpty())
+                <div class="space-y-4">
+                    @foreach ($topCategories as $index => $category)
+                        @php
+                            $colors = ['blue', 'green', 'purple', 'yellow', 'red'];
+                            $color = $colors[$index] ?? 'gray';
+                            $barWidth =
+                                $maxCategoryCount > 0
+                                    ? round(($category->documents_count / $maxCategoryCount) * 100, 1)
+                                    : 0;
+                        @endphp
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-8 h-8 bg-{{ $color }}-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span
+                                    class="text-sm font-bold text-{{ $color }}-600">{{ $index + 1 }}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-900">{{ $category->name }}</span>
+                                    <span
+                                        class="text-sm font-bold text-gray-900">{{ number_format($category->documents_count) }}</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                    <div class="bg-{{ $color }}-600 h-1.5 rounded-full"
+                                        style="width: {{ $barWidth }}%"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-blue-600 h-1.5 rounded-full" style="width: 85%"></div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-
-                <!-- Category 2 -->
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-green-600">2</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-gray-900">Research Papers</span>
-                            <span class="text-sm font-bold text-gray-900">267</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-green-600 h-1.5 rounded-full" style="width: 70%"></div>
-                        </div>
-                    </div>
+            @else
+                <div class="text-center py-8">
+                    <p class="text-gray-500 text-sm">No categories available</p>
                 </div>
-
-                <!-- Category 3 -->
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-purple-600">3</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-gray-900">Administrative</span>
-                            <span class="text-sm font-bold text-gray-900">198</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-purple-600 h-1.5 rounded-full" style="width: 55%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 4 -->
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-yellow-600">4</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-gray-900">Student Materials</span>
-                            <span class="text-sm font-bold text-gray-900">156</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-yellow-600 h-1.5 rounded-full" style="width: 42%"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Category 5 -->
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-red-600">5</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-sm font-medium text-gray-900">Course Syllabi</span>
-                            <span class="text-sm font-bold text-gray-900">134</span>
-                        </div>
-                        <div class="w-full bg-gray-100 rounded-full h-1.5">
-                            <div class="bg-red-600 h-1.5 rounded-full" style="width: 35%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endif
         </div>
     </div>
 
