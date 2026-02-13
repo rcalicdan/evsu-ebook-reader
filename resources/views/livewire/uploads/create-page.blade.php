@@ -133,6 +133,108 @@
                 </div>
             </x-form.section>
 
+            <!-- Tags Section -->
+            <x-form.section title="Document Tags"
+                description="Add tags to help categorize and search for this document">
+                <div class="space-y-4">
+                    @foreach ($tags as $index => $tag)
+                        <div wire:key="tag-{{ $index }}">
+                            <!-- Flex Container for Input and Buttons -->
+                            <div class="flex gap-3 items-center">
+
+                                <!-- Input Container -->
+                                <div class="flex-1 relative">
+                                    <x-form.input type="text"
+                                        wire:model.live.debounce.300ms="tags.{{ $index }}.name"
+                                        placeholder="Enter or search for a tag">
+                                        <x-slot:icon>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                        </x-slot:icon>
+                                    </x-form.input>
+                                </div>
+
+                                <!-- Buttons Container -->
+                                <!-- Removed pt-2, added shrink-0 to prevent squishing -->
+                                <div class="flex gap-2 shrink-0">
+                                    @if ($index === count($tags) - 1)
+                                        <button type="button" wire:click="addTag"
+                                            class="inline-flex items-center justify-center w-9 h-9 text-sm font-medium text-white bg-university-red rounded-lg hover:bg-university-red/90 focus:outline-none focus:ring-2 focus:ring-university-red focus:ring-offset-2 transition-colors"
+                                            title="Add another tag">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    @endif
+
+                                    @if (count($tags) > 1)
+                                        <button type="button" wire:click="removeTag({{ $index }})"
+                                            class="inline-flex items-center justify-center w-9 h-9 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-colors"
+                                            title="Remove tag">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Error Message: Moved OUTSIDE the flex row -->
+                            @error("tags.{$index}.name")
+                                <p class="mt-1.5 text-sm text-red-600 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endforeach
+
+                    <!-- Tag Suggestions Dropdown -->
+                    @if ($showSuggestions && !empty($suggestedTags))
+                        <div class="relative">
+                            <div
+                                class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                <div class="p-2">
+                                    <p class="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Existing Tags</p>
+                                    @foreach ($suggestedTags as $suggestion)
+                                        <button type="button"
+                                            wire:click="selectTag('{{ $suggestion['name'] }}', {{ count($tags) - 1 }})"
+                                            class="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md transition-colors flex items-center justify-between group">
+                                            <div class="flex items-center gap-2">
+                                                <svg class="w-4 h-4 text-gray-400" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                                </svg>
+                                                <span
+                                                    class="text-sm font-medium text-gray-900">{{ $suggestion['name'] }}</span>
+                                            </div>
+                                            <span class="text-xs text-gray-500">{{ $suggestion['document_count'] }}
+                                                docs</span>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <p class="text-xs text-gray-500">
+                        <svg class="w-4 h-4 inline-block mr-1 text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Start typing to see existing tags or create new ones. Tags help organize and search documents.
+                    </p>
+                </div>
+            </x-form.section>
+
             <!-- Settings Section -->
             <x-form.section title="Document Settings" description="Configure visibility and status options">
                 <x-form.grid cols="2">
