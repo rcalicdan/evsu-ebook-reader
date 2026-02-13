@@ -18,7 +18,7 @@ class ShowPage extends Component
     {
         $this->authorize('view', $document);
 
-        $this->document = $document;
+        $this->document = $document->load(['tags', 'category', 'uploader']);
         $this->document->incrementViewCount();
     }
 
