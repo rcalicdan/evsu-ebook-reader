@@ -74,27 +74,6 @@
         </div>
     </div>
 
-    <!-- Document Uploads Chart -->
-    <!-- Added x-data to initialize the Alpine component -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6" x-data="documentUploadsChart()">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-lg font-bold text-gray-900">Document Uploads</h3>
-                <p class="text-sm text-gray-500 mt-1">Daily uploads over the past 30 days</p>
-            </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-500">Total</p>
-                <p class="text-2xl font-bold text-gray-900">156</p>
-            </div>
-        </div>
-
-        <!-- Chart Canvas -->
-        <div class="relative" style="height: 300px;">
-            <!-- Removed ID, added x-ref for Alpine access -->
-            <canvas x-ref="chartCanvas"></canvas>
-        </div>
-    </div>
-
     <!-- Two Column Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Document Status -->
@@ -315,14 +294,14 @@
                 <p class="text-red-100 text-sm">Upload and manage your documents efficiently</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="{{ route('documents.index') }}"
+                <a wire:navigate href="{{ route('uploads.index') }}"
                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-red-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Upload Document
                 </a>
-                <a href="{{ route('documents.index') }}"
+                <a wire:navigate href="{{ route('documents.index') }}"
                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 text-white font-semibold rounded-lg hover:bg-white/20 transition-colors border border-white/30 text-sm">
                     Browse All
                 </a>
@@ -330,5 +309,3 @@
         </div>
     </div>
 </div>
-
-@include("livewire.dashboard.scripts")

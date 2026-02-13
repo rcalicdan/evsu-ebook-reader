@@ -38,8 +38,8 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <x-table.head>
+                    <x-table.cell header>ID</x-table.cell>
                     <x-table.cell header>Category Name</x-table.cell>
-                    <x-table.cell header>Description</x-table.cell>
                     <x-table.cell header class="text-center">Actions</x-table.cell>
                 </x-table.head>
 
@@ -47,11 +47,11 @@
                     @forelse($categories as $category)
                         <x-table.row>
                             <x-table.cell>
-                                <span class="font-bold text-gray-900">{{ $category->name }}</span>
+                                <span class="text-gray-600 font-mono text-sm">{{ $category->id }}</span>
                             </x-table.cell>
 
                             <x-table.cell>
-                                <span class="text-gray-600 font-medium">{{ $category->description ?? 'No description' }}</span>
+                                <span class="font-bold text-gray-900">{{ $category->name }}</span>
                             </x-table.cell>
 
                             <x-table.cell>
@@ -78,7 +78,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="3" class="text-center py-8">
+                            <x-table.cell colspan="4" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">

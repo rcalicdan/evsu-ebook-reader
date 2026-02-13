@@ -47,6 +47,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <x-table.head>
+                    <x-table.cell header>ID</x-table.cell>
                     <x-table.cell header>Full Name</x-table.cell>
                     <x-table.cell header>Email Address</x-table.cell>
                     <x-table.cell header>System Role</x-table.cell>
@@ -56,6 +57,10 @@
                 <x-table.body>
                     @forelse($users as $user)
                         <x-table.row>
+                            <x-table.cell>
+                                <span class="text-gray-600 font-mono text-sm">{{ $user->id }}</span>
+                            </x-table.cell>
+
                             <x-table.cell>
                                 <div class="flex items-center">
                                     <x-ui.avatar :name="$user->full_name" :variant="$user->isAdmin() || $user->isSuperAdmin() ? 'secondary' : 'primary'" />
@@ -105,7 +110,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="4" class="text-center py-8">
+                            <x-table.cell colspan="5" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">

@@ -59,6 +59,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <x-table.head>
+                    <x-table.cell header>ID</x-table.cell>
                     <x-table.cell header>Document</x-table.cell>
                     <x-table.cell header>Category</x-table.cell>
                     <x-table.cell header class="text-center">Visibility</x-table.cell>
@@ -70,6 +71,10 @@
                 <x-table.body>
                     @forelse($documents as $document)
                         <x-table.row>
+                            <x-table.cell>
+                                <span class="text-gray-600 font-mono text-sm">{{ $document->id }}</span>
+                            </x-table.cell>
+
                             <x-table.cell>
                                 <div class="flex items-start gap-3">
                                     <div
@@ -177,7 +182,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="6" class="text-center py-12">
+                            <x-table.cell colspan="7" class="text-center py-12">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
