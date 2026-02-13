@@ -170,72 +170,75 @@
     <div class="bg-white rounded-lg border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold text-gray-900">Recent Activity</h3>
-            <a href="#" class="text-sm font-medium text-red-600 hover:text-red-700">
+            <a wire:navigate href="{{ route('audit-logs.index') }}"
+                class="text-sm font-medium text-red-600 hover:text-red-700">
                 View all
             </a>
         </div>
 
         <div class="space-y-3">
-            <!-- Activity 1 -->
-            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-900">
-                        <span class="font-semibold">New upload:</span> Research Methodology Guide 2024
-                    </p>
-                    <p class="text-xs text-gray-500 mt-0.5">2 minutes ago</p>
-                </div>
-            </div>
+            @forelse($recentActivity as $log)
+                @php
+                    $iconConfig = match ($log->event) {
+                        'created' => [
+                            'bg' => 'bg-green-100',
+                            'svg' => 'text-green-600',
+                            'path' => 'M12 4v16m8-8H4',
+                            'label' => 'New ' . $log->auditable_type_name,
+                        ],
+                        'updated' => [
+                            'bg' => 'bg-blue-100',
+                            'svg' => 'text-blue-600',
+                            'path' =>
+                                'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z',
+                            'label' => 'Updated ' . $log->auditable_type_name,
+                        ],
+                        'deleted' => [
+                            'bg' => 'bg-red-100',
+                            'svg' => 'text-red-600',
+                            'path' =>
+                                'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16',
+                            'label' => 'Deleted ' . $log->auditable_type_name,
+                        ],
+                        default => [
+                            'bg' => 'bg-purple-100',
+                            'svg' => 'text-purple-600',
+                            'path' => 'M5 13l4 4L19 7',
+                            'label' => ucfirst($log->event) . ' ' . $log->auditable_type_name,
+                        ],
+                    };
+                @endphp
 
-            <!-- Activity 2 -->
-            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-900">
-                        <span class="font-semibold">Updated:</span> Course Syllabus - Spring 2024
-                    </p>
-                    <p class="text-xs text-gray-500 mt-0.5">15 minutes ago</p>
-                </div>
-            </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div
+                        class="w-8 h-8 {{ $iconConfig['bg'] }} rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 {{ $iconConfig['svg'] }}" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="{{ $iconConfig['path'] }}" />
+                        </svg>
+                    </div>
 
-            <!-- Activity 3 -->
-            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-900">
-                        <span class="font-semibold">Published:</span> Academic Calendar 2024-2025
-                    </p>
-                    <p class="text-xs text-gray-500 mt-0.5">1 hour ago</p>
-                </div>
-            </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900">{{ $iconConfig['label'] }}</p>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            {{ $log->created_at->diffForHumans() }}
+                            @if ($log->user)
+                                &middot; by {{ $log->user->full_name }}
+                            @endif
+                        </p>
+                    </div>
 
-            <!-- Activity 4 -->
-            <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
+                    <a wire:navigate href="{{ route('audit-logs.show', $log) }}"
+                        class="flex-shrink-0 text-xs font-medium text-red-600 hover:text-red-700 hover:underline transition-colors">
+                        View
+                    </a>
                 </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-900">
-                        <span class="font-semibold">New upload:</span> Student Handbook 2024
-                    </p>
-                    <p class="text-xs text-gray-500 mt-0.5">3 hours ago</p>
+            @empty
+                <div class="text-center py-8">
+                    <p class="text-gray-500 text-sm">No recent activity found</p>
                 </div>
-            </div>
+            @endforelse
         </div>
     </div>
 

@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard;
 
 use App\Enums\DocumentStatus;
+use App\Models\AuditLog;
 use App\Models\Category;
 use App\Models\Document;
 use Illuminate\Support\Facades\Cache;
@@ -29,7 +30,18 @@ class IndexPage extends Component
             'maxCategoryCount' => $this->getMaxCategoryCount(),
         ]);
 
+        $data['recentActivity'] = $this->getRecentActivity();
+
         return view('livewire.dashboard.index-page', $data);
+    }
+
+    private function getRecentActivity()
+    {
+        return AuditLog::query()
+            ->with('user')
+            ->latest()
+            ->limit(4)
+            ->get();
     }
 
     private function getTotalDocuments(): int
@@ -59,7 +71,7 @@ class IndexPage extends Component
         $lastMonthDocuments = Document::whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
             ->count();
-        
+
         if ($lastMonthDocuments === 0) {
             return 0;
         }
@@ -88,7 +100,7 @@ class IndexPage extends Component
     private function getActivePercentage(): float
     {
         $totalDocuments = $this->getTotalDocuments();
-        
+
         if ($totalDocuments === 0) {
             return 0;
         }
@@ -99,7 +111,7 @@ class IndexPage extends Component
     private function getArchivedPercentage(): float
     {
         $totalDocuments = $this->getTotalDocuments();
-        
+
         if ($totalDocuments === 0) {
             return 0;
         }
