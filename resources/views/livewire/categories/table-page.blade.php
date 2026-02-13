@@ -38,8 +38,8 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <x-table.head>
-                    <x-table.cell header>ID</x-table.cell>
-                    <x-table.cell header>Category Name</x-table.cell>
+                    <x-table.cell header sortable sortField="id">ID</x-table.cell>
+                    <x-table.cell header sortable sortField="name">Category Name</x-table.cell>
                     <x-table.cell header class="text-center">Actions</x-table.cell>
                 </x-table.head>
 

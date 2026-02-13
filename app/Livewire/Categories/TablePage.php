@@ -3,6 +3,7 @@
 namespace App\Livewire\Categories;
 
 use App\Models\Category;
+use App\Traits\WithSorting;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -12,20 +13,21 @@ use Livewire\WithPagination;
 #[Layout("components.layouts.app")]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, WithSorting;
 
     #[Url(as: 'q')]
     public string $search = '';
 
     public int $perPage = 10;
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-    ];
+    protected array $sortableColumns = ['id', 'name'];
 
     public function mount(): void
     {
         $this->authorize('viewAny', Category::class);
+
+        $this->sortField = $this->sortField ?: 'id';
+        $this->sortDirection = $this->sortDirection ?: 'asc';
     }
 
     public function updatingSearch(): void
@@ -72,9 +74,11 @@ class TablePage extends Component
                     $q->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('description', 'like', '%' . $this->search . '%');
                 });
-            })
-            ->latest()
-            ->paginate($this->perPage);
+            });
+
+        $categories = $this->applySorting($categories);
+
+        $categories = $categories->paginate($this->perPage);
 
         return view('livewire.categories.table-page', [
             'categories' => $categories,

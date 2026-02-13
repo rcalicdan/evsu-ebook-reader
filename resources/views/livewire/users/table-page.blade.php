@@ -47,10 +47,10 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <x-table.head>
-                    <x-table.cell header>ID</x-table.cell>
-                    <x-table.cell header>Full Name</x-table.cell>
-                    <x-table.cell header>Email Address</x-table.cell>
-                    <x-table.cell header>System Role</x-table.cell>
+                    <x-table.cell header sortable sortField="id">ID</x-table.cell>
+                    <x-table.cell header sortable sortField="first_name">Full Name</x-table.cell>
+                    <x-table.cell header sortable sortField="email">Email Address</x-table.cell>
+                    <x-table.cell header sortable sortField="role">System Role</x-table.cell>
                     <x-table.cell header class="text-center">Actions</x-table.cell>
                 </x-table.head>
 

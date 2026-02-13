@@ -4,7 +4,7 @@ namespace App\Livewire\Users;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Services\Notification;
+use App\Traits\WithSorting;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
@@ -14,7 +14,7 @@ use Livewire\WithPagination;
 #[Layout("components.layouts.app")]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use WithPagination, AuthorizesRequests, WithSorting;
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -24,14 +24,14 @@ class TablePage extends Component
 
     public int $perPage = 10;
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'roleFilter' => ['except' => ''],
-    ];
+    protected array $sortableColumns = ['id', 'first_name', 'email', 'role'];
 
     public function mount(): void
     {
         $this->authorize('viewAny', User::class);
+
+        $this->sortField = $this->sortField ?: 'id';
+        $this->sortDirection = $this->sortDirection ?: 'asc';
     }
 
     public function updatingSearch(): void
@@ -88,9 +88,11 @@ class TablePage extends Component
             })
             ->when($this->roleFilter, function ($query) {
                 $query->where('role', $this->roleFilter);
-            })
-            ->latest()
-            ->paginate($this->perPage);
+            });
+
+        $users = $this->applySorting($users);
+
+        $users = $users->paginate($this->perPage);
 
         return view('livewire.users.table-page', [
             'users' => $users,
