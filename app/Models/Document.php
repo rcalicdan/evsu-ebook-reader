@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\DocumentStatus;
 use App\Enums\DocumentVisibility;
+use App\Libraries\Audit\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Document extends Model
 {
-    use HasFactory;
+    use HasFactory, Auditable;
+
+    protected $auditExcluded = [
+        'slug',
+        'view_count',
+    ];
 
     protected $fillable = [
         'title',
