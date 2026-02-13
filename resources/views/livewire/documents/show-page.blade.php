@@ -132,6 +132,45 @@
                     </button>
                 </div>
             </x-form.card>
+
+            <!-- Tags Card -->
+            <x-form.card>
+                <x-slot:title>
+                    <h3 class="text-lg font-bold text-gray-800">Tags</h3>
+                    <p class="text-sm text-gray-500 font-normal mt-1">Categories and labels for this document.</p>
+                </x-slot:title>
+
+                @if($document->tags->count() > 0)
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($document->tags as $tag)
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-university-red/10 text-university-red rounded-lg text-sm font-medium border border-university-red/20 transition-colors hover:bg-university-red/20">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                </svg>
+                                {{ $tag->name }}
+                            </span>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="flex flex-col items-center justify-center py-8 text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-500 font-medium">No tags assigned</p>
+                        <p class="text-xs text-gray-400 mt-1">This document doesn't have any tags yet.</p>
+                        @can('update', $document)
+                            <a href="{{ route('documents.edit', $document) }}" 
+                               class="mt-3 text-xs text-university-red hover:text-university-red/80 font-medium">
+                                Add tags →
+                            </a>
+                        @endcan
+                    </div>
+                @endif
+            </x-form.card>
         </div>
 
         <!-- Right Column — Sidebar -->
@@ -233,46 +272,6 @@
 
         <!-- PDF Preview Modal -->
         @include('livewire.documents.show-pdf-preview-modal')
-
-        <!-- Tags Card -->
-        <x-form.card>
-            <x-slot:title>
-                <h3 class="text-lg font-bold text-gray-800">Tags</h3>
-                <p class="text-sm text-gray-500 font-normal mt-1">Categories and labels for this document.</p>
-            </x-slot:title>
-
-            @if ($document->tags->count() > 0)
-                <div class="flex flex-wrap gap-2">
-                    @foreach ($document->tags as $tag)
-                        <span
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-university-red/10 text-university-red rounded-lg text-sm font-medium border border-university-red/20 transition-colors hover:bg-university-red/20">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                            </svg>
-                            {{ $tag->name }}
-                        </span>
-                    @endforeach
-                </div>
-            @else
-                <div class="flex flex-col items-center justify-center py-8 text-center">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
-                    </div>
-                    <p class="text-sm text-gray-500 font-medium">No tags assigned</p>
-                    <p class="text-xs text-gray-400 mt-1">This document doesn't have any tags yet.</p>
-                    @can('update', $document)
-                        <a href="{{ route('documents.edit', $document) }}"
-                            class="mt-3 text-xs text-university-red hover:text-university-red/80 font-medium">
-                            Add tags →
-                        </a>
-                    @endcan
-                </div>
-            @endif
-        </x-form.card>
     </div>
 </div>
 
