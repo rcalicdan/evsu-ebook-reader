@@ -29,29 +29,45 @@
             </x-slot:icon>
         </x-partials.sidebar-link>
 
-        <x-partials.sidebar-link href="{{ route('users.index') }}" route="users.*" label="Users">
-            <x-slot:icon>
-                <x-partials.sidebar-icon path="M12 4a4 4 0 110 8 4 4 0 010-8zm-8 16a6 6 0 0116 0" />
-            </x-slot:icon>
-        </x-partials.sidebar-link>
+        @can('viewAny', App\Models\User::class)
+            <x-partials.sidebar-link href="{{ route('users.index') }}" route="users.*" label="Users">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M12 4a4 4 0 110 8 4 4 0 010-8zm-8 16a6 6 0 0116 0" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
 
-        <x-partials.sidebar-link href="{{ route('categories.index') }}" route="categories.*" label="Categories">
-            <x-slot:icon>
-                <x-partials.sidebar-icon path="M7 3h5l7 7-7 7H7L3 12V7a4 4 0 014-4z" />
-            </x-slot:icon>
-        </x-partials.sidebar-link>
+        @can('viewAny', App\Models\Category::class)
+            <x-partials.sidebar-link href="{{ route('categories.index') }}" route="categories.*" label="Categories">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M7 3h5l7 7-7 7H7L3 12V7a4 4 0 014-4z" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
 
-        <x-partials.sidebar-link href="{{ route('uploads.index') }}" route="uploads.*" label="Upload">
-            <x-slot:icon>
-                <x-partials.sidebar-icon path="M15 13l-3-3-3 3m3-3v12" />
-            </x-slot:icon>
-        </x-partials.sidebar-link>
+        @can('create', App\Models\Document::class)
+            <x-partials.sidebar-link href="{{ route('uploads.index') }}" route="uploads.*" label="Upload">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M15 13l-3-3-3 3m3-3v12" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
 
-        <x-partials.sidebar-link href="{{ route('documents.index') }}" route="documents.*" label="Documents">
-            <x-slot:icon>
-                <x-partials.sidebar-icon path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586l5.414 5.414" />
-            </x-slot:icon>
-        </x-partials.sidebar-link>
+        @can('viewAny', App\Models\Document::class)
+            <x-partials.sidebar-link href="{{ route('documents.index') }}" route="documents.*" label="Documents">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586l5.414 5.414" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
+
+        @can('viewAny', App\Models\AuditLog::class)
+            <x-partials.sidebar-link href="{{ route('audit-logs.index') }}" route="audit-logs.*" label="Audit Logs">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
 
         <hr class="my-4 border-red-900" x-show="!sidebarCollapsed">
     </nav>
