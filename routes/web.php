@@ -4,14 +4,14 @@ use App\Livewire\Profile\Settings;
 use App\Http\Controllers\DocumentPreviewController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'livewire.home.index-page')->name('home');
-
+Route::get('/', \App\Livewire\Home\IndexPage::class)->name('home');
+Route::view('documents', 'livewire.home.table-page')->name('home.documents');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', \App\Livewire\Auth\Login::class)->name('login');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->prefix('dashboard')->group(function () {
     Route::post('logout', \App\Livewire\Auth\Logout::class)->name('logout');
 
     Route::prefix("users")->group(function () {
@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('profile', Settings::class)->name('profile');
 
-    Route::prefix("dashboard")->group(function () {
+    Route::prefix("")->group(function () {
         Route::get('', \App\Livewire\Dashboard\IndexPage::class)->name('dashboard.index');
     });
 
