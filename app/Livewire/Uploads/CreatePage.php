@@ -45,6 +45,13 @@ class CreatePage extends Component
         $this->status = DocumentStatus::ACTIVE->value;
 
         $this->tags = [['name' => '']];
+
+        if (request()->has('category')) {
+            $categoryId = (int) request()->get('category');
+            if (Category::where('id', $categoryId)->exists()) {
+                $this->category_id = $categoryId;
+            }
+        }
     }
 
     public function rules(): array

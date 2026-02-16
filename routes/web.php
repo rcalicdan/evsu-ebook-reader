@@ -4,7 +4,6 @@ use App\Livewire\Profile\Settings;
 use App\Http\Controllers\DocumentPreviewController;
 use Illuminate\Support\Facades\Route;
 
-// Home/Landing Page Route (Public)
 Route::view('/', 'livewire.home.index-page')->name('home');
 
 
@@ -30,6 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix("categories")->group(function () {
         Route::get('', \App\Livewire\Categories\TablePage::class)->name('categories.index');
         Route::get('create', \App\Livewire\Categories\CreatePage::class)->name('categories.create');
+        Route::get('{category}', \App\Livewire\Categories\ShowPage::class)->name('categories.show');
         Route::get('{category}/edit', \App\Livewire\Categories\UpdatePage::class)->name('categories.edit');
     });
 

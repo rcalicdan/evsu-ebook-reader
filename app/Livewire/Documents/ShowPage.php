@@ -4,6 +4,7 @@ namespace App\Livewire\Documents;
 
 use App\Models\Document;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -19,7 +20,20 @@ class ShowPage extends Component
         $this->authorize('view', $document);
 
         $this->document = $document->load(['tags', 'category', 'uploader']);
-        $this->document->incrementViewCount();
+        
+        $this->trackDocumentView();
+    }
+
+    protected function trackDocumentView(): void
+    {
+        $userId = auth()->id();
+        $sessionKey = "document_viewed_{$this->document->id}_user_{$userId}";
+        
+        if (!Session::has($sessionKey)) {
+            $this->document->incrementViewCount();
+            
+            Session::put($sessionKey, now()->timestamp);
+        }
     }
 
     public function render()

@@ -56,6 +56,8 @@
 
                             <x-table.cell>
                                 <div class="flex items-center justify-center gap-2">
+                                    <x-ui.view-button :href="route('categories.show', $category)" />
+
                                     @can('update', $category)
                                         <x-ui.edit-button :href="route('categories.edit', $category)" />
                                     @endcan
