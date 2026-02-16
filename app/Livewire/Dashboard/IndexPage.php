@@ -8,12 +8,18 @@ use App\Models\Category;
 use App\Models\Document;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Can;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('components.layouts.app')]
 class IndexPage extends Component
 {
+    public function mount()
+    {
+        $this->authorize('view-dashboard');
+    }
+    
     public function render()
     {
         $data = Cache::flexible('dashboard.stats', [300, 600], fn() => [
