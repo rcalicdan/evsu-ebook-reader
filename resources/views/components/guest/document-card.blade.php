@@ -2,7 +2,7 @@
     'document',
 ])
 
-<a href="{{ route('home.documents.show', $document->slug) }}" 
+<a wire:navigate href="{{ route('home.documents.show', $document->slug) }}" 
    class="group block bg-white border border-slate-200 rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 overflow-hidden">
     
     <!-- Thumbnail Area -->

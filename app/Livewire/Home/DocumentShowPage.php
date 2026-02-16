@@ -21,18 +21,18 @@ class DocumentShowPage extends Component
         );
 
         $this->document = $document->load(['tags', 'category', 'uploader']);
-        
+
         $this->trackDocumentView();
     }
 
     protected function trackDocumentView(): void
     {
-        $userId = auth()->id() ?? 'guest';
+        $userId = auth()->id();
         $sessionKey = "document_viewed_{$this->document->id}_user_{$userId}";
-        
+
         if (!Session::has($sessionKey)) {
             $this->document->incrementViewCount();
-            
+
             Session::put($sessionKey, now()->timestamp);
         }
     }

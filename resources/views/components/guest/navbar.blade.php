@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="flex items-center space-x-4 hover:opacity-90 transition-opacity">
+            <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-4 hover:opacity-90 transition-opacity">
                 <div class="h-12 w-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg border-2 border-white/20 shrink-0">
                     <img src="{{ asset('images/logo.jpg') }}" alt="EVSU Logo" class="h-full w-full object-cover">
                 </div>
@@ -15,7 +15,8 @@
             <!-- Auth Buttons -->
             <div>
                 @auth
-                    <a href="{{ route('dashboard.index') }}"
+                    <a wire:navigate href="{{ route('dashboard.index') }}"
+                        wire:navigate
                         class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Dashboard
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +24,7 @@
                         </svg>
                     </a>
                 @else
-                    <a href="{{ route('login') }}"
+                    <a wire:navigate href="{{ route('login') }}"
                         class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Login
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

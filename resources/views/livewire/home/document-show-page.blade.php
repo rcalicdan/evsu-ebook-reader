@@ -3,7 +3,7 @@
 
         <!-- Back Button -->
         <div class="mb-6">
-            <a href="{{ route('home.documents') }}"
+            <a wire:navigate href="{{ route('home.documents') }}"
                 class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-university-red transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -204,7 +204,7 @@
                             <h3 class="text-lg font-bold mb-2">Want to access more?</h3>
                             <p class="text-sm text-white/90 mb-4">Login to save favorites, access restricted documents, and
                                 more.</p>
-                            <a href="{{ route('login') }}"
+                            <a wire:navigate href="{{ route('login') }}"
                                 class="inline-flex items-center gap-2 px-4 py-2 bg-white text-university-red rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors">
                                 Login Now
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

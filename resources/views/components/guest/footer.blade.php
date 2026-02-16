@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-6">
             <!-- Brand -->
-            <a href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-90 transition-opacity">
+            <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-3 hover:opacity-90 transition-opacity">
                 <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
                     <img src="{{ asset('images/logo.jpg') }}" alt="EVSU Logo" class="h-full w-full object-cover">
                 </div>
