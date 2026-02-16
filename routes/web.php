@@ -5,7 +5,7 @@ use App\Http\Controllers\DocumentPreviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', \App\Livewire\Home\IndexPage::class)->name('home');
-Route::view('documents', 'livewire.home.table-page')->name('home.documents');
+Route::get('documents', \App\Livewire\Home\TablePage::class)->name('home.documents');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', \App\Livewire\Auth\Login::class)->name('login');
