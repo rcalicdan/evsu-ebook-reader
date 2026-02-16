@@ -10,11 +10,11 @@
     </header>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Filter Section (Mobile Responsive & Static) -->
+        <!-- Filter Section -->
         <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 md:p-6 mb-10">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 
-                <!-- Search Input (Spans full width on mobile/tablet, half width on desktop) -->
+                <!-- Search Input with Debounce -->
                 <div class="md:col-span-2 lg:col-span-2">
                     <label for="search"
                         class="block text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-2">
@@ -29,9 +29,11 @@
                                     clip-rule="evenodd" />
                             </svg>
                         </div>
-                        <input type="text" name="search" id="search"
-                            class="block w-full rounded-lg border-slate-300 pl-10 py-2.5 shadow-sm focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm"
-                            placeholder="Search by title, author, or keywords...">
+                        <input type="text" 
+                               wire:model.live.debounce.500ms="search"
+                               id="search"
+                               class="block w-full rounded-lg border-slate-300 pl-10 py-2.5 shadow-sm focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm"
+                               placeholder="Search by title, author, or keywords...">
                     </div>
                 </div>
 
@@ -41,13 +43,13 @@
                         class="block text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-2">
                         Category
                     </label>
-                    <select id="category" name="category"
-                        class="block w-full rounded-lg border-slate-300 shadow-sm py-2.5 pl-3 pr-10 text-base focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm">
-                        <option>All Categories</option>
-                        <option>Research Papers</option>
-                        <option>Thesis Archives</option>
-                        <option>Capstone Projects</option>
-                        <option>E-Books</option>
+                    <select wire:model.live="category"
+                            id="category"
+                            class="block w-full rounded-lg border-slate-300 shadow-sm py-2.5 pl-3 pr-10 text-base focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm">
+                        <option value="">All Categories</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                        @endforeach
                     </select>
                 </div>
 
@@ -57,11 +59,12 @@
                         class="block text-[11px] font-bold text-slate-500 uppercase tracking-[0.1em] mb-2">
                         Status
                     </label>
-                    <select id="status" name="status"
-                        class="block w-full rounded-lg border-slate-300 shadow-sm py-2.5 pl-3 pr-10 text-base focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm">
-                        <option>All Statuses</option>
-                        @foreach (App\Enums\DocumentStatus::cases() as $status)
-                            <option value="{{ $status->value }}">{{ $status->label() }}</option>
+                    <select wire:model.live="status"
+                            id="status"
+                            class="block w-full rounded-lg border-slate-300 shadow-sm py-2.5 pl-3 pr-10 text-base focus:border-university-red focus:ring-4 focus:ring-university-red/10 transition-all sm:text-sm">
+                        <option value="">All Statuses</option>
+                        @foreach (App\Enums\DocumentStatus::cases() as $statusOption)
+                            <option value="{{ $statusOption->value }}">{{ $statusOption->label() }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -72,40 +75,42 @@
         <!-- Results Count & Sorting -->
         <div class="flex justify-between items-center mb-6">
             <p class="text-sm text-slate-600">
-                Showing <span class="font-semibold text-slate-900">25</span> results
+                Showing <span class="font-semibold text-slate-900">{{ $documents->total() }}</span> results
             </p>
             <div>
                 <label for="sort" class="sr-only">Sort by</label>
-                <select id="sort" name="sort"
-                    class="block w-full rounded-lg border-slate-300 shadow-sm py-1.5 pl-3 pr-10 text-sm focus:border-university-red focus:outline-none focus:ring-2 focus:ring-university-red/50">
-                    <option>Date Published</option>
-                    <option>Most Relevant</option>
-                    <option>Alphabetical</option>
+                <select wire:model.live="sort"
+                        id="sort"
+                        class="block w-full rounded-lg border-slate-300 shadow-sm py-1.5 pl-3 pr-10 text-sm focus:border-university-red focus:outline-none focus:ring-2 focus:ring-university-red/50">
+                    <option value="latest">Date Published</option>
+                    <option value="popular">Most Popular</option>
+                    <option value="alphabetical">Alphabetical</option>
                 </select>
             </div>
         </div>
 
-        <!-- 5x5 Document Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            @php
-                $categories = ['Research', 'Thesis', 'Capstone', 'E-Book'];
-                $statuses = \App\Enums\DocumentStatus::cases();
-            @endphp
+        <!-- Document Grid -->
+        @if($documents->count())
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                @foreach ($documents as $document)
+                    <x-guest.document-card :document="$document" />
+                @endforeach
+            </div>
 
-            @for ($i = 1; $i <= 25; $i++)
-                @php
-                    $randomStatus = $statuses[array_rand($statuses)];
-                @endphp
-                <x-guest.document-card title="Advanced Engineering Mathematics Vol. {{ $i }}"
-                    category="{{ $categories[array_rand($categories)] }}" status="{{ $randomStatus->value }}"
-                    statusColor="{{ $randomStatus->color() }}" />
-            @endfor
-        </div>
-
-        <!-- Pagination Section -->
-        <div class="mt-12">
-            <x-guest.pagination />
-        </div>
+            <!-- Pagination -->
+            <div class="mt-12">
+                {{ $documents->links('components.guest.pagination') }}
+            </div>
+        @else
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-slate-900">No documents found</h3>
+                <p class="mt-1 text-sm text-slate-500">Try adjusting your search or filters.</p>
+            </div>
+        @endif
 
     </div>
 </div>

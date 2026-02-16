@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', \App\Livewire\Home\IndexPage::class)->name('home');
 Route::get('documents', \App\Livewire\Home\TablePage::class)->name('home.documents');
+Route::get('documents/{document}', \App\Livewire\Home\DocumentShowPage::class)->name('home.documents.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('login', \App\Livewire\Auth\Login::class)->name('login');
