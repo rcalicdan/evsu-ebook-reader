@@ -30,15 +30,21 @@ class Login extends Component
 
             session()->regenerate();
 
-            $this->dispatch('notify', 
+            $this->dispatch(
+                'notify',
                 message: 'Welcome back, ' . $user->name . '!',
                 type: 'success'
             );
 
-            return $this->redirect(session()->pull('url.intended', '/'), navigate: false);
+            $intendedRoute = match (true) {
+                $user->isSuperAdmin(), $user->isAdmin() => route('dashboard.index'),
+                default => route('dashboard.index'),
+            };
 
+            return $this->redirect($intendedRoute, navigate: false);
         } catch (ValidationException $e) {
-            $this->dispatch('notify', 
+            $this->dispatch(
+                'notify',
                 message: 'Invalid credentials. Please try again.',
                 type: 'error'
             );
@@ -47,7 +53,8 @@ class Login extends Component
 
             throw $e;
         } catch (\Exception $e) {
-            $this->dispatch('notify', 
+            $this->dispatch(
+                'notify',
                 message: 'An error occurred. Please try again.',
                 type: 'error'
             );

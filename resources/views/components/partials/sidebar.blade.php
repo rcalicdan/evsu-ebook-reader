@@ -11,10 +11,8 @@
 
     <div class="flex items-center justify-center h-20 border-b border-red-900 flex-shrink-0">
         <div class="flex items-center space-x-3">
-            <img src="{{ asset('images/logo.jpg') }}" 
-                 alt="EVSU Logo" 
-                 class="w-12 h-12"
-                 style="border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+            <img src="{{ asset('images/logo.jpg') }}" alt="EVSU Logo" class="w-12 h-12"
+                style="border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
             <span x-show="!sidebarCollapsed" x-transition class="text-2xl font-bold">
                 DocHub
             </span>
@@ -23,11 +21,13 @@
 
     <nav class="mt-6 px-3 flex-1 overflow-y-auto pb-20">
 
-        <x-partials.sidebar-link href="{{ route('dashboard.index') }}" route="dashboard*" label="Dashboard">
-            <x-slot:icon>
-                <x-partials.sidebar-icon path="M3 12l2-2 7-7 7 7" />
-            </x-slot:icon>
-        </x-partials.sidebar-link>
+        @can('view-dashboard')
+            <x-partials.sidebar-link href="{{ route('dashboard.index') }}" route="dashboard*" label="Dashboard">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M3 12l2-2 7-7 7 7" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
 
         @can('viewAny', App\Models\User::class)
             <x-partials.sidebar-link href="{{ route('users.index') }}" route="users.*" label="Users">
@@ -64,7 +64,8 @@
         @can('viewAny', App\Models\AuditLog::class)
             <x-partials.sidebar-link href="{{ route('audit-logs.index') }}" route="audit-logs.*" label="Audit Logs">
                 <x-slot:icon>
-                    <x-partials.sidebar-icon path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    <x-partials.sidebar-icon
+                        path="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </x-slot:icon>
             </x-partials.sidebar-link>
         @endcan
