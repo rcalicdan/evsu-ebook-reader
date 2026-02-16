@@ -4,6 +4,10 @@ use App\Livewire\Profile\Settings;
 use App\Http\Controllers\DocumentPreviewController;
 use Illuminate\Support\Facades\Route;
 
+// Home/Landing Page Route (Public)
+Route::view('/', 'livewire.home.index-page')->name('home');
+
+
 Route::middleware('guest')->group(function () {
     Route::get('login', \App\Livewire\Auth\Login::class)->name('login');
 });
@@ -19,7 +23,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('profile', Settings::class)->name('profile');
 
-    Route::prefix("/")->group(function () {
+    Route::prefix("dashboard")->group(function () {
         Route::get('', \App\Livewire\Dashboard\IndexPage::class)->name('dashboard.index');
     });
 
