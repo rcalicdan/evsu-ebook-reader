@@ -9,7 +9,8 @@
     class="bg-university-red text-white fixed md:static inset-y-0 left-0 z-30 overflow-y-auto transition-all duration-300 shadow-lg flex flex-col"
     style="display: none;">
 
-    <div class="flex items-center justify-center h-20 border-b border-red-900 flex-shrink-0">
+    <a href="{{ route('home') }}"
+        class="flex items-center justify-center h-20 border-b border-red-900 flex-shrink-0 hover:bg-black/10 transition-colors duration-200">
         <div class="flex items-center space-x-3">
             <img src="{{ asset('images/logo.jpg') }}" alt="EVSU Logo" class="w-12 h-12"
                 style="border-radius: 50%; object-fit: cover; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
@@ -17,7 +18,7 @@
                 DocHub
             </span>
         </div>
-    </div>
+    </a>
 
     <nav class="mt-6 px-3 flex-1 overflow-y-auto pb-20">
 
