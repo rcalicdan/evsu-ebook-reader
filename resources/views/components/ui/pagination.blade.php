@@ -19,10 +19,9 @@
                     Prev
                 </button>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" wire:navigate
-                   class="px-3 py-1.5 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                <button wire:click="previousPage" class="px-3 py-1.5 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                     Prev
-                </a>
+                </button>
             @endif
 
             {{-- Pagination Elements --}}
@@ -32,19 +31,17 @@
                         {{ $page }}
                     </button>
                 @else
-                    <a href="{{ $url }}" wire:navigate
-                       class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                    <button wire:click="gotoPage({{ $page }})" class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                         {{ $page }}
-                    </a>
+                    </button>
                 @endif
             @endforeach
 
             {{-- Next Button --}}
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" wire:navigate
-                   class="px-3 py-1.5 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                <button wire:click="nextPage" class="px-3 py-1.5 text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
                     Next
-                </a>
+                </button>
             @else
                 <button disabled class="px-3 py-1.5 text-xs font-bold text-gray-300 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed">
                     Next
