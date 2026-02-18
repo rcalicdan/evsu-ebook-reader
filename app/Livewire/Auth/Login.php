@@ -38,7 +38,7 @@ class Login extends Component
 
             $intendedRoute = match (true) {
                 $user->isSuperAdmin(), $user->isAdmin() => route('dashboard.index'),
-                default => route('dashboard.index'),
+                default => route('documents.index'),
             };
 
             return $this->redirect($intendedRoute, navigate: false);

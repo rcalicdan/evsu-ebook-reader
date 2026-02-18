@@ -2,8 +2,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
-            <a wire:navigate href="{{ route('home') }}" class="flex items-center space-x-4 hover:opacity-90 transition-opacity">
-                <div class="h-12 w-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg border-2 border-white/20 shrink-0">
+            <a wire:navigate href="{{ route('home') }}"
+                class="flex items-center space-x-4 hover:opacity-90 transition-opacity">
+                <div
+                    class="h-12 w-12 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-lg border-2 border-white/20 shrink-0">
                     <img src="{{ asset('images/logo.jpg') }}" alt="EVSU Logo" class="h-full w-full object-cover">
                 </div>
                 <div class="flex flex-col justify-center">
@@ -14,13 +16,20 @@
 
             <!-- Auth Buttons -->
             <div>
+                @php
+                    $user = auth()->user();
+                    $intendedRoute = match (true) {
+                        $user->isSuperAdmin(), $user->isAdmin() => route('dashboard.index'),
+                        default => route('documents.index'),
+                    };
+                @endphp
                 @auth
-                    <a wire:navigate href="{{ route('dashboard.index') }}"
-                        wire:navigate
+                    <a wire:navigate href="{{ $intendedRoute }}" wire:navigate
                         class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Dashboard
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                     </a>
                 @else
@@ -28,7 +37,8 @@
                         class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
                         Login
                         <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                         </svg>
                     </a>
                 @endauth
