@@ -16,31 +16,31 @@
 
             <!-- Auth Buttons -->
             <div>
-                @php
-                    $user = auth()->user();
-                    $intendedRoute = match (true) {
-                        $user->isSuperAdmin(), $user->isAdmin() => route('dashboard.index'),
-                        default => route('documents.index'),
-                    };
-                @endphp
                 @auth
-                    <a wire:navigate href="{{ $intendedRoute }}" wire:navigate
-                        class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        Dashboard
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
+                @php
+                $user = auth()->user();
+                $intendedRoute = match (true) {
+                $user->isSuperAdmin(), $user->isAdmin() => route('dashboard.index'),
+                default => route('documents.index'),
+                };
+                @endphp
+                <a wire:navigate href="{{ $intendedRoute }}"
+                    class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    Dashboard
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
                 @else
-                    <a wire:navigate href="{{ route('login') }}"
-                        class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
-                        Login
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                        </svg>
-                    </a>
+                <a wire:navigate href="{{ route('login') }}"
+                    class="inline-flex items-center px-6 py-2.5 bg-white text-university-red rounded-lg font-bold text-sm hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    Login
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                </a>
                 @endauth
             </div>
         </div>
