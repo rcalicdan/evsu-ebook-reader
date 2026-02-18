@@ -13,6 +13,7 @@ Route::get('documents/{document}', \App\Livewire\Home\DocumentShowPage::class)
 
 Route::middleware('guest')->group(function () {
     Route::get('login', \App\Livewire\Auth\Login::class)->name('login');
+    Route::get('register', \App\Livewire\Auth\Register::class)->name('register');
 });
 
 Route::middleware('auth')->prefix('dashboard')->group(function () {

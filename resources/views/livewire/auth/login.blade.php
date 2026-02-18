@@ -21,7 +21,7 @@
             <div class="form-group" x-data="{ showPassword: false }">
                 <label for="password">Password</label>
                 <div class="password-input-wrapper">
-                    <input :type="showPassword ? 'text' : 'password'" id="password" wire:model="password" 
+                    <input :type="showPassword ? 'text' : 'password'" id="password" wire:model="password"
                         placeholder="••••••••" class="@error('password') error @enderror" required>
                     <button type="button" @click="showPassword = !showPassword" class="password-toggle-btn">
                         <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,6 +54,15 @@
                     Signing in...
                 </span>
             </button>
+
+            <!-- Link to Register -->
+            <p class="mt-4 text-center text-sm text-gray-500">
+                Don't have an account?
+                <a wire:navigate href="{{ route('register') }}" class="text-university-red font-semibold hover:underline">
+                    Register here
+                </a>
+            </p>
+
         </form>
     </div>
 
