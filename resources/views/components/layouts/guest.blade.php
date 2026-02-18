@@ -15,39 +15,18 @@
 
     <style>
         @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
 
         @keyframes float-delayed {
-
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-15px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
         }
 
         @keyframes slide-up {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .animate-float {
@@ -73,25 +52,30 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
     </style>
+
     @livewireStyles()
     @stack('styles')
 </head>
 
 <body class="bg-gray-50 font-sans antialiased flex flex-col min-h-screen">
 
-    <!-- Header / Navbar Component -->
     <x-guest.navbar />
 
-    <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center relative overflow-hidden">
         {{ $slot }}
     </main>
 
-    <!-- Footer Component -->
     <x-guest.footer />
 
     @stack('scripts')
     @livewireScripts()
+
+    <script>
+        window.addEventListener('popstate', function () {
+            window.location.reload();
+        });
+    </script>
+
 </body>
 
 </html>
