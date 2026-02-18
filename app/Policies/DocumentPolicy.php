@@ -21,7 +21,7 @@ class DocumentPolicy
      */
     public function view(User $user, Document $document): bool
     {
-        if ($document->isPublic()) {
+        if ($document->isPublic() || $document->isArchived()) {
             return true;
         }
 

@@ -15,7 +15,7 @@ class DocumentShowPage extends Component
     public function mount(Document $document): void
     {
         abort_unless(
-            $document->isPublic() && $document->isActive(),
+            $document->isPublic() && ($document->isActive() || $document->isArchived()),
             404,
             'Document not found or not available.'
         );
