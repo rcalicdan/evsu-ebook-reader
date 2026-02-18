@@ -3,6 +3,7 @@
 namespace App\Livewire\Home;
 
 use App\Enums\DocumentStatus;
+use App\Enums\DocumentVisibility;
 use App\Models\Category;
 use App\Models\Document;
 use Livewire\Attributes\Layout;
@@ -51,6 +52,7 @@ class TablePage extends Component
     {
         return Document::query()
             ->with(['category', 'uploader'])
+            ->where('visibility', DocumentVisibility::PUBLIC)  
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('title', 'like', "%{$this->search}%")
@@ -62,19 +64,29 @@ class TablePage extends Component
                         });
                 });
             })
-            ->when($this->category, fn($query) => 
+            ->when(
+                $this->category,
+                fn($query) =>
                 $query->where('category_id', $this->category)
             )
-            ->when($this->status, fn($query) => 
+            ->when(
+                $this->status,
+                fn($query) =>
                 $query->where('status', $this->status)
             )
-            ->when($this->sort === 'latest', fn($query) => 
+            ->when(
+                $this->sort === 'latest',
+                fn($query) =>
                 $query->latest()
             )
-            ->when($this->sort === 'alphabetical', fn($query) => 
+            ->when(
+                $this->sort === 'alphabetical',
+                fn($query) =>
                 $query->orderBy('title')
             )
-            ->when($this->sort === 'popular', fn($query) => 
+            ->when(
+                $this->sort === 'popular',
+                fn($query) =>
                 $query->orderByDesc('view_count')
             )
             ->paginate(25);

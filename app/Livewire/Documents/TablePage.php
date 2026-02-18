@@ -103,6 +103,9 @@ class TablePage extends Component
     {
         $documents = Document::query()
             ->with(['uploader', 'category'])
+            ->when(auth()->user()->isStudent(), function ($query) {
+                $query->where('visibility', DocumentVisibility::PUBLIC);
+            })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('title', 'like', '%' . $this->search . '%')
