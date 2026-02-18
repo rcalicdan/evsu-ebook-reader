@@ -7,7 +7,7 @@
         </div>
         <div class="auth-header-text">
             <h1>{{ $title ?? 'Eastern Visayas State University' }}</h1>
-            <p>{{ $subtitle ?? 'eBook Management System' }}</p>
+            <p>{{ $subtitle ?? 'School Of Engineering' }}</p>
         </div>
     </a>
 </div>
