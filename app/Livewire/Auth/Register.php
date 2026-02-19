@@ -29,8 +29,13 @@ class Register extends Component
             'first_name'            => ['required', 'string', 'max:100'],
             'last_name'             => ['required', 'string', 'max:100'],
             'email'                 => ['required', 'email', Rule::unique('users', 'email')],
-            'student_id'            => ['required', 'string', 'max:20', Rule::unique('student_profiles', 'student_id')],
-            'course'                => ['required', Rule::enum(Course::class)],
+            'student_id' => [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^(19|20)\d{2}-\d{5}$/',
+                Rule::unique('student_profiles', 'student_id'),
+            ],
             'password'              => ['required', 'string', 'min:8', 'confirmed'],
             'password_confirmation' => ['required'],
         ];
@@ -52,6 +57,7 @@ class Register extends Component
             'password.min'                  => 'Password must be at least 8 characters.',
             'password.confirmed'            => 'Password confirmation does not match.',
             'password_confirmation.required' => 'Please confirm your password.',
+            'student_id.regex' => 'Student ID must follow the format YYYY-NNNNN (e.g. 2021-00001), from 1900 to 2099.',
         ];
     }
 

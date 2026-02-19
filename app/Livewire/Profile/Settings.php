@@ -46,7 +46,13 @@ class Settings extends Component
         ];
 
         if ($user->isStudent()) {
-            $rules['student_id'] = ['required', 'string', 'max:20', Rule::unique('student_profiles', 'student_id')->ignore($user->studentProfile?->id)];
+            $rules['student_id'] = [
+                'required',
+                'string',
+                'max:20',
+                'regex:/^(19|20)\d{2}-\d{5}$/',
+                Rule::unique('student_profiles', 'student_id')->ignore($user->studentProfile?->id)
+            ];
         }
 
         if ($this->current_password || $this->new_password || $this->new_password_confirmation) {
@@ -74,6 +80,7 @@ class Settings extends Component
             'new_password.required'             => 'New password is required.',
             'new_password.min'                  => 'New password must be at least 8 characters.',
             'new_password.confirmed'            => 'Password confirmation does not match.',
+            'student_id.regex' => 'Student ID must follow the format YYYY-NNNNN (e.g. 2021-00001), from 1900 to 2099.',
         ];
     }
 
