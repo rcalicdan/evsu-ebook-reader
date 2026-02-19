@@ -13,9 +13,14 @@ enum Course: string
     case BSIT   = 'BSIT';
     case BSME   = 'BSME';
 
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::BSChE  => 'BS Chemical Engineering (BSChE)',
             self::BSCE   => 'BS Civil Engineering (BSCE)',
             self::BSEE   => 'BS Electrical Engineering (BSEE)',
