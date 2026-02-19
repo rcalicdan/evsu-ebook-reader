@@ -12,8 +12,7 @@
         <!-- Search & Filters -->
         <x-table.header>
             <div class="relative w-full md:w-96">
-                <input type="text" wire:model.live.debounce.300ms="search"
-                    placeholder="Search by name or email..."
+                <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search by name or email..."
                     class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-university-red/20 focus:border-university-red transition-all">
                 <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
                     viewBox="0 0 24 24">
@@ -88,16 +87,7 @@
 
                             <x-table.cell>
                                 <div class="flex items-center justify-center">
-                                    <button
-                                        wire:click="approve({{ $user->id }})"
-                                        wire:confirm="Are you sure you want to approve {{ $user->full_name }}?"
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 text-xs font-medium rounded-lg hover:bg-green-100 transition-colors border border-green-200">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Approve
-                                    </button>
+                                    <x-ui.approve-button :id="$user->id" :name="$user->full_name" wire="approve" />
                                 </div>
                             </x-table.cell>
                         </x-table.row>
