@@ -4,42 +4,42 @@ namespace App\Livewire\AuditLogs;
 
 use App\Models\AuditLog;
 use App\Traits\WithRelationshipSorting;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Carbon\Carbon;
 
 #[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests, WithRelationshipSorting;
+    use AuthorizesRequests, WithPagination, WithRelationshipSorting;
 
     #[Url(except: '')]
     public string $search = '';
-    
+
     #[Url(except: '')]
     public string $eventFilter = '';
-    
+
     #[Url(except: '')]
     public string $auditableTypeFilter = '';
-    
+
     #[Url(except: '')]
     public string $dateFilter = '';
-    
+
     #[Url(except: '')]
     public string $dateFrom = '';
-    
+
     #[Url(except: '')]
     public string $dateTo = '';
-    
+
     #[Url(except: '')]
     public string $timeFrom = '';
-    
+
     #[Url(except: '')]
     public string $timeTo = '';
-    
+
     public bool $showTimeFilters = false;
 
     protected array $sortableColumns = [
@@ -47,7 +47,7 @@ class TablePage extends Component
         'event',
         'auditable_type',
         'created_at',
-        'user_name', 
+        'user_name',
     ];
 
     protected array $relationshipSorts = [
@@ -57,10 +57,10 @@ class TablePage extends Component
     public function mount(): void
     {
         $this->authorize('viewAny', AuditLog::class);
-        
+
         $this->sortField = $this->sortField ?: 'created_at';
         $this->sortDirection = $this->sortDirection ?: 'desc';
-        
+
         if ($this->timeFrom || $this->timeTo) {
             $this->showTimeFilters = true;
         }
@@ -84,7 +84,7 @@ class TablePage extends Component
     public function updatingDateFilter(): void
     {
         $this->resetPage();
-        
+
         if ($this->dateFilter !== 'custom') {
             $this->clearDateRange();
         }
@@ -123,9 +123,9 @@ class TablePage extends Component
 
     public function toggleTimeFilters(): void
     {
-        $this->showTimeFilters = !$this->showTimeFilters;
-        
-        if (!$this->showTimeFilters) {
+        $this->showTimeFilters = ! $this->showTimeFilters;
+
+        if (! $this->showTimeFilters) {
             $this->timeFrom = '';
             $this->timeTo = '';
         }
@@ -133,31 +133,31 @@ class TablePage extends Component
 
     protected function applyDateTimeFilter($query): void
     {
-        if (!$this->dateFrom && !$this->dateTo) {
+        if (! $this->dateFrom && ! $this->dateTo) {
             return;
         }
 
         if ($this->dateFrom) {
             $fromDateTime = Carbon::parse($this->dateFrom);
-            
+
             if ($this->timeFrom) {
                 $fromDateTime->setTimeFromTimeString($this->timeFrom);
             } else {
                 $fromDateTime->startOfDay();
             }
-            
+
             $query->where('created_at', '>=', $fromDateTime);
         }
 
         if ($this->dateTo) {
             $toDateTime = Carbon::parse($this->dateTo);
-            
+
             if ($this->timeTo) {
                 $toDateTime->setTimeFromTimeString($this->timeTo);
             } else {
                 $toDateTime->endOfDay();
             }
-            
+
             $query->where('created_at', '<=', $toDateTime);
         }
     }
@@ -169,7 +169,7 @@ class TablePage extends Component
 
     protected function getForeignKeyForRelation(string $relation): string
     {
-        return match($relation) {
+        return match ($relation) {
             'user' => 'audit_logs.user_id',
             default => "{$relation}_id",
         };
@@ -228,9 +228,9 @@ class TablePage extends Component
             ->orderBy('auditable_type')
             ->get()
             ->pluck('auditable_type')
-            ->map(fn($type) => [
+            ->map(fn ($type) => [
                 'value' => $type,
-                'label' => class_basename($type)
+                'label' => class_basename($type),
             ]);
 
         return view('livewire.audit-logs.table-page', [

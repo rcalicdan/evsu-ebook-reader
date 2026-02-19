@@ -13,10 +13,10 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests;
+    use AuthorizesRequests, WithPagination;
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -108,8 +108,8 @@ class TablePage extends Component
             })
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%');
+                    $q->where('title', 'like', '%'.$this->search.'%')
+                        ->orWhere('description', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->statusFilter, function ($query) {

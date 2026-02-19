@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Document extends Model
 {
-    use HasFactory, Auditable;
+    use Auditable, HasFactory;
 
     protected $auditExcluded = [
         'slug',

@@ -8,7 +8,6 @@ use App\Models\Category;
 use App\Models\Document;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\Can;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -19,10 +18,10 @@ class IndexPage extends Component
     {
         $this->authorize('view-dashboard');
     }
-    
+
     public function render()
     {
-        $data = Cache::flexible('dashboard.stats', [300, 600], fn() => [
+        $data = Cache::flexible('dashboard.stats', [300, 600], fn () => [
             'totalDocuments' => $this->getTotalDocuments(),
             'totalViews' => $this->getTotalViews(),
             'activeCategories' => $this->getActiveCategories(),
@@ -90,7 +89,7 @@ class IndexPage extends Component
         return Document::select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
             ->get()
-            ->mapWithKeys(fn($item) => [$item->status->value => $item->count]);
+            ->mapWithKeys(fn ($item) => [$item->status->value => $item->count]);
     }
 
     private function getActiveCount(): int

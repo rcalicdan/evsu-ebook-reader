@@ -11,10 +11,10 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests, WithSorting;
+    use AuthorizesRequests, WithPagination, WithSorting;
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -80,10 +80,10 @@ class TablePage extends Component
         $users = User::query()
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('email', 'like', '%' . $this->search . '%')
-                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $this->search . '%']);
+                    $q->where('first_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%')
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%'.$this->search.'%']);
                 });
             })
             ->when($this->roleFilter, function ($query) {
@@ -104,7 +104,7 @@ class TablePage extends Component
     {
         return array_reduce(
             UserRole::cases(),
-            fn($carry, $role) => $carry + [$role->value => $role->label()],
+            fn ($carry, $role) => $carry + [$role->value => $role->label()],
             ['' => 'All Roles']
         );
     }

@@ -3,11 +3,11 @@
 namespace App\Livewire\Auth;
 
 use App\Services\AuthService;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-use Illuminate\Validation\ValidationException;
 
 #[Layout('components.layouts.auth')]
 #[Title('Login - EVSU eBook')]
@@ -32,7 +32,7 @@ class Login extends Component
 
             $this->dispatch(
                 'notify',
-                message: 'Welcome back, ' . $user->name . '!',
+                message: 'Welcome back, '.$user->name.'!',
                 type: 'success'
             );
 

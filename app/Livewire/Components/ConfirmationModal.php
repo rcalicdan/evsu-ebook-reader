@@ -7,13 +7,21 @@ use Livewire\Component;
 class ConfirmationModal extends Component
 {
     public bool $show = false;
+
     public string $title = '';
+
     public string $message = '';
+
     public string $confirmText = 'Confirm';
+
     public string $cancelText = 'Cancel';
+
     public string $variant = 'danger';
+
     public string $eventName = '';
+
     public array $eventParams = [];
+
     protected $listeners = ['showConfirmationModal'];
 
     public function showConfirmationModal(

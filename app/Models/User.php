@@ -5,15 +5,15 @@ namespace App\Models;
 use App\Enums\UserRole;
 use App\Libraries\Audit\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, Auditable;
+    use Auditable, HasFactory, Notifiable;
 
     protected $fillable = [
         'email',
@@ -21,6 +21,9 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'role',
+        'course',
+        'is_approved',
+        'is_suspended',
     ];
 
     protected $hidden = [
@@ -29,6 +32,9 @@ class User extends Authenticatable
 
     protected $casts = [
         'role' => UserRole::class,
+        'course' => Course::class,
+        'is_approved' => 'boolean',
+        'is_suspended' => 'boolean',
     ];
 
     public function studentProfile(): HasOne

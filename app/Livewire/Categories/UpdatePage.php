@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class UpdatePage extends Component
 {
     use AuthorizesRequests;
@@ -18,6 +18,7 @@ class UpdatePage extends Component
     public Category $category;
 
     public string $name = '';
+
     public string $description = '';
 
     public function mount(Category $category): void
@@ -57,7 +58,7 @@ class UpdatePage extends Component
             $this->category->update([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
-                'slug' => Str::slug($validated['name'])
+                'slug' => Str::slug($validated['name']),
             ]);
 
             RedirectNotification::success('Category updated successfully!');

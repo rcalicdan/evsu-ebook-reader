@@ -10,10 +10,10 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use WithPagination, AuthorizesRequests, WithSorting;
+    use AuthorizesRequests, WithPagination, WithSorting;
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -71,8 +71,8 @@ class TablePage extends Component
         $categories = Category::query()
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('description', 'like', '%' . $this->search . '%');
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('description', 'like', '%'.$this->search.'%');
                 });
             });
 

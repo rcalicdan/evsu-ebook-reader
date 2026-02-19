@@ -6,10 +6,6 @@ class RedirectNotification
 {
     /**
      * Flash a notification message to the session
-     *
-     * @param string $message
-     * @param string $type
-     * @return void
      */
     public static function flash(string $message, string $type = 'success'): void
     {
@@ -21,9 +17,6 @@ class RedirectNotification
 
     /**
      * Flash a success notification
-     *
-     * @param string $message
-     * @return void
      */
     public static function success(string $message): void
     {
@@ -32,9 +25,6 @@ class RedirectNotification
 
     /**
      * Flash an error notification
-     *
-     * @param string $message
-     * @return void
      */
     public static function error(string $message): void
     {
@@ -43,9 +33,6 @@ class RedirectNotification
 
     /**
      * Flash a warning notification
-     *
-     * @param string $message
-     * @return void
      */
     public static function warning(string $message): void
     {
@@ -54,9 +41,6 @@ class RedirectNotification
 
     /**
      * Flash an info notification
-     *
-     * @param string $message
-     * @return void
      */
     public static function info(string $message): void
     {

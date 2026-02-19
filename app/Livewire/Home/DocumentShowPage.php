@@ -30,7 +30,7 @@ class DocumentShowPage extends Component
         $userId = auth()->id();
         $sessionKey = "document_viewed_{$this->document->id}_user_{$userId}";
 
-        if (!Session::has($sessionKey)) {
+        if (! Session::has($sessionKey)) {
             $this->document->incrementViewCount();
 
             Session::put($sessionKey, now()->timestamp);

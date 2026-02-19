@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Course;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +23,9 @@ return new class extends Migration
 
             $table->index('email');
             $table->index('role');
+            $table->enum('course', Course::values())->nullable()->after('role');
+            $table->boolean('is_approved')->default(false)->after('course');
+            $table->boolean('is_suspended')->default(false)->after('is_approved');
         });
 
         Schema::create('sessions', function (Blueprint $table) {

@@ -9,12 +9,13 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class CreatePage extends Component
 {
     use AuthorizesRequests;
 
     public string $name = '';
+
     public string $description = '';
 
     public function mount(): void
@@ -51,7 +52,7 @@ class CreatePage extends Component
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'created_by' => auth()->id(),
-                'slug' => Str::slug($validated['name'])
+                'slug' => Str::slug($validated['name']),
             ]);
 
             RedirectNotification::success('Category created successfully!');
@@ -60,7 +61,7 @@ class CreatePage extends Component
         } catch (\Exception $e) {
             $this->dispatch(
                 'notify',
-                message: 'An error occurred while creating the category.' . $e->getMessage(),
+                message: 'An error occurred while creating the category.'.$e->getMessage(),
                 type: 'error'
             );
         }

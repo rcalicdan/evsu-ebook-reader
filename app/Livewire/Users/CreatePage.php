@@ -11,16 +11,21 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class CreatePage extends Component
 {
     use AuthorizesRequests;
 
     public string $first_name = '';
+
     public string $last_name = '';
+
     public string $email = '';
+
     public string $role = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
 
     public function mount(): void
@@ -118,7 +123,7 @@ class CreatePage extends Component
     {
         return array_reduce(
             UserRole::cases(),
-            fn($carry, $role) => $carry + [$role->value => $role->label()],
+            fn ($carry, $role) => $carry + [$role->value => $role->label()],
             []
         );
     }

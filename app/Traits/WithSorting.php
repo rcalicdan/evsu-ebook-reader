@@ -9,13 +9,13 @@ trait WithSorting
 {
     #[Url(except: '')]
     public string $sortField = '';
-    
+
     #[Url(except: 'asc')]
     public string $sortDirection = 'asc';
 
     public function sortBy(string $field): void
     {
-        if (!$this->isSortable($field)) {
+        if (! $this->isSortable($field)) {
             return;
         }
 

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Document;
 use App\Models\User;
-use App\Enums\UserRole;
 
 class DocumentPolicy
 {
@@ -13,7 +12,7 @@ class DocumentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -25,8 +24,8 @@ class DocumentPolicy
             return true;
         }
 
-        return $user->isAdmin() 
-            || $user->isSuperAdmin() 
+        return $user->isAdmin()
+            || $user->isSuperAdmin()
             || $document->uploaded_by === $user->id;
     }
 
@@ -43,8 +42,8 @@ class DocumentPolicy
      */
     public function update(User $user, Document $document): bool
     {
-        return $user->isAdmin() 
-            || $user->isSuperAdmin() 
+        return $user->isAdmin()
+            || $user->isSuperAdmin()
             || $document->uploaded_by === $user->id;
     }
 
@@ -53,8 +52,8 @@ class DocumentPolicy
      */
     public function delete(User $user, Document $document): bool
     {
-        return $user->isAdmin() 
-            || $user->isSuperAdmin() 
+        return $user->isAdmin()
+            || $user->isSuperAdmin()
             || $document->uploaded_by === $user->id;
     }
 

@@ -11,17 +11,32 @@ use Livewire\Component;
 class Register extends Component
 {
     public string $name = '';
+
     public string $email = '';
+
     public string $course = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
+
+    public string $student_id = '';
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'student_id' => ['required', 'string', 'max:20', Rule::unique('student_profiles', 'student_id')],
+            'course' => ['required', Rule::enum(Course::class)],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password_confirmation' => ['required'],
+        ];
+    }
 
     public function register(): void
     {
-        $this->validate([
-            'course' => ['required', Rule::enum(Course::class)],
-            // ...other rules
-        ]);
+        $this->validate();
     }
 
     public function render()

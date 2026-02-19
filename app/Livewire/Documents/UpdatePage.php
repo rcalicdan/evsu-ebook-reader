@@ -15,10 +15,10 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class UpdatePage extends Component
 {
     use AuthorizesRequests, WithFileUploads;
@@ -26,17 +26,24 @@ class UpdatePage extends Component
     public Document $document;
 
     public string $title = '';
+
     public string $description = '';
+
     public ?int $category_id = null;
+
     public string $visibility = '';
+
     public string $status = '';
 
     /** @var TemporaryUploadedFile|null */
     public $file;
 
     public array $tags = [];
+
     public string $tagSearch = '';
+
     public array $suggestedTags = [];
+
     public bool $showSuggestions = false;
 
     public function mount(Document $document): void
@@ -102,23 +109,23 @@ class UpdatePage extends Component
         if (strlen($this->tagSearch) >= 2) {
             $currentTagNames = array_filter(
                 array_column($this->tags, 'name'),
-                fn($name) => !empty(trim($name))
+                fn ($name) => ! empty(trim($name))
             );
 
-            $this->suggestedTags = Tag::where('name', 'like', '%' . $this->tagSearch . '%')
+            $this->suggestedTags = Tag::where('name', 'like', '%'.$this->tagSearch.'%')
                 ->whereNotIn('name', $currentTagNames)
                 ->orderBy('name')
                 ->limit(10)
                 ->get()
-                ->map(fn($tag) => [
+                ->map(fn ($tag) => [
                     'id' => $tag->id,
                     'name' => $tag->name,
                     'slug' => $tag->slug,
-                    'document_count' => $tag->document_count ?? 0
+                    'document_count' => $tag->document_count ?? 0,
                 ])
                 ->toArray();
 
-            $this->showSuggestions = !empty($this->suggestedTags);
+            $this->showSuggestions = ! empty($this->suggestedTags);
         } else {
             $this->suggestedTags = [];
             $this->showSuggestions = false;
@@ -168,10 +175,10 @@ class UpdatePage extends Component
         $existingTags = $this->document->tags()
             ->orderBy('name')
             ->get()
-            ->map(fn($tag) => ['name' => $tag->name])
+            ->map(fn ($tag) => ['name' => $tag->name])
             ->toArray();
 
-        $this->tags = !empty($existingTags) ? $existingTags : [['name' => '']];
+        $this->tags = ! empty($existingTags) ? $existingTags : [['name' => '']];
     }
 
     private function updateDocumentDetails(array $validated): void
@@ -214,7 +221,7 @@ class UpdatePage extends Component
     private function uploadFile(): string
     {
         $extension = $this->file->guessExtension();
-        $fileName = $this->document->slug . '.' . $extension;
+        $fileName = $this->document->slug.'.'.$extension;
 
         return Storage::disk('public')->putFileAs('documents', $this->file, $fileName);
     }

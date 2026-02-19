@@ -18,23 +18,30 @@ use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class CreatePage extends Component
 {
     use AuthorizesRequests, WithFileUploads;
 
     public string $title = '';
+
     public string $description = '';
+
     public ?int $category_id = null;
+
     public string $visibility = '';
+
     public string $status = '';
 
     /** @var TemporaryUploadedFile|null */
     public $file;
 
     public array $tags = [];
+
     public string $tagSearch = '';
+
     public array $suggestedTags = [];
+
     public bool $showSuggestions = false;
 
     public function mount(): void
@@ -102,19 +109,19 @@ class CreatePage extends Component
     public function updatedTagSearch(): void
     {
         if (strlen($this->tagSearch) >= 2) {
-            $this->suggestedTags = Tag::where('name', 'like', '%' . $this->tagSearch . '%')
+            $this->suggestedTags = Tag::where('name', 'like', '%'.$this->tagSearch.'%')
                 ->orderBy('name')
                 ->limit(10)
                 ->get()
-                ->map(fn($tag) => [
+                ->map(fn ($tag) => [
                     'id' => $tag->id,
                     'name' => $tag->name,
                     'slug' => $tag->slug,
-                    'document_count' => $tag->document_count ?? 0
+                    'document_count' => $tag->document_count ?? 0,
                 ])
                 ->toArray();
 
-            $this->showSuggestions = !empty($this->suggestedTags);
+            $this->showSuggestions = ! empty($this->suggestedTags);
         } else {
             $this->suggestedTags = [];
             $this->showSuggestions = false;
@@ -199,13 +206,13 @@ class CreatePage extends Component
         $baseSlug = Str::slug($title);
         $timestamp = now()->format('YmdHis');
 
-        return $baseSlug . '-' . $timestamp;
+        return $baseSlug.'-'.$timestamp;
     }
 
     private function uploadFile(string $uniqueSlug): string
     {
         $extension = $this->file->guessExtension();
-        $fileName = $uniqueSlug . '.' . $extension;
+        $fileName = $uniqueSlug.'.'.$extension;
 
         return Storage::disk('public')->putFileAs('documents', $this->file, $fileName);
     }
@@ -214,7 +221,7 @@ class CreatePage extends Component
     {
         $tagIds = $this->processTagsInput();
 
-        if (!empty($tagIds)) {
+        if (! empty($tagIds)) {
             $document->tags()->attach($tagIds);
         }
     }

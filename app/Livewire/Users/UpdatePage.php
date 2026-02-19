@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout("components.layouts.app")]
+#[Layout('components.layouts.app')]
 class UpdatePage extends Component
 {
     use AuthorizesRequests;
@@ -19,10 +19,15 @@ class UpdatePage extends Component
     public User $user;
 
     public string $first_name = '';
+
     public string $last_name = '';
+
     public string $email = '';
+
     public string $role = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
 
     public function mount(User $user): void
@@ -143,7 +148,7 @@ class UpdatePage extends Component
     {
         return array_reduce(
             UserRole::cases(),
-            fn($carry, $role) => $carry + [$role->value => $role->label()],
+            fn ($carry, $role) => $carry + [$role->value => $role->label()],
             []
         );
     }

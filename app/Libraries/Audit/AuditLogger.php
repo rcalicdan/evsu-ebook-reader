@@ -19,6 +19,7 @@ class AuditLogger
     ];
 
     protected static ?string $customMessage = null;
+
     protected static array $additionalData = [];
 
     public static function created(Model $model, ?string $message = null): void
@@ -33,7 +34,7 @@ class AuditLogger
 
         $changes = static::getChanges($originalData, $newData);
 
-        if (!empty($changes['old']) || !empty($changes['new'])) {
+        if (! empty($changes['old']) || ! empty($changes['new'])) {
             static::log($model, 'updated', $changes['old'], $changes['new'], $message);
         }
     }
@@ -66,7 +67,7 @@ class AuditLogger
 
     public static function synced(Model $model, string $relation, array $changes, ?string $message = null): void
     {
-        if (!empty($changes['attached']) || !empty($changes['detached']) || !empty($changes['updated'])) {
+        if (! empty($changes['attached']) || ! empty($changes['detached']) || ! empty($changes['updated'])) {
             static::log($model, 'synced', [], [
                 'relation' => $relation,
                 'changes' => $changes,
@@ -82,13 +83,15 @@ class AuditLogger
     public static function withMessage(string $message): self
     {
         static::$customMessage = $message;
-        return new static();
+
+        return new static;
     }
 
     public static function withAdditionalData(array $data): self
     {
         static::$additionalData = array_merge(static::$additionalData, $data);
-        return new static();
+
+        return new static;
     }
 
     protected static function log(Model $model, string $event, array $oldValues, array $newValues, ?string $message = null): void
@@ -117,7 +120,7 @@ class AuditLogger
             'ip_address' => static::getClientIpAddress(),
             'user_agent' => static::getUserAgent(),
             'url' => static::getCurrentUrl(),
-            'additional_data' => !empty($additionalData) ? $additionalData : null,
+            'additional_data' => ! empty($additionalData) ? $additionalData : null,
         ]);
 
         // Clear static properties after use
@@ -162,6 +165,7 @@ class AuditLogger
     protected static function filterAttributes(array $attributes, ?array $excludedAttributes = null): array
     {
         $excluded = $excludedAttributes ?? static::$excludedAttributes;
+
         return array_diff_key($attributes, array_flip($excluded));
     }
 

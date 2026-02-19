@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained("users")->cascadeOnDelete();
-            $table->foreignId('document_id')->constrained("documents")->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('document_id')->constrained('documents')->cascadeOnDelete();
             $table->timestamp('created_at')->useCurrent();
 
             $table->unique(['user_id', 'document_id']);

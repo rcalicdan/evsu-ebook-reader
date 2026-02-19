@@ -11,7 +11,7 @@ class Logout extends Component
     {
         $authService->logout();
 
-        $this->dispatch('notify', 
+        $this->dispatch('notify',
             message: 'You have been logged out successfully.',
             type: 'info'
         );

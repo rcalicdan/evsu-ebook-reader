@@ -12,13 +12,13 @@ trait WithRelationshipSorting
 
     protected function applySorting(Builder $query): Builder
     {
-        if (!$this->sortField || !$this->isSortable($this->sortField)) {
+        if (! $this->sortField || ! $this->isSortable($this->sortField)) {
             return $query;
         }
 
         if (property_exists($this, 'relationshipSorts') && isset($this->relationshipSorts[$this->sortField])) {
             [$relation, $column] = $this->relationshipSorts[$this->sortField];
-            
+
             return $query->orderBy(
                 $this->getRelationshipSubquery($relation, $column),
                 $this->sortDirection
@@ -32,7 +32,7 @@ trait WithRelationshipSorting
     {
         $modelClass = $this->getModelClass();
         $model = new $modelClass;
-        
+
         $relatedModel = $model->$relation()->getRelated();
         $table = $relatedModel->getTable();
         $foreignKey = $this->getForeignKeyForRelation($relation);

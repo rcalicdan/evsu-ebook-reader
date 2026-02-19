@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 trait Auditable
 {
     protected ?string $auditMessage = null;
+
     protected static bool $auditingEnabled = true;
+
     protected static array $auditingDisabledFor = [];
 
     protected static function bootAuditable(): void
@@ -41,6 +43,7 @@ trait Auditable
         if ($relation && $this->shouldAudit()) {
             $result = parent::attach($id, $attributes, $touch);
             AuditLogger::attached($this, $relation, $id, $attributes, $this->getAuditMessage());
+
             return $result;
         }
 
@@ -57,6 +60,7 @@ trait Auditable
         if ($relation && $this->shouldAudit()) {
             $result = parent::detach($ids, $touch);
             AuditLogger::detached($this, $relation, $ids, $this->getAuditMessage());
+
             return $result;
         }
 
@@ -73,6 +77,7 @@ trait Auditable
         if ($relation && $this->shouldAudit()) {
             $changes = parent::sync($ids, $detaching);
             AuditLogger::synced($this, $relation, $changes, $this->getAuditMessage());
+
             return $changes;
         }
 
@@ -85,6 +90,7 @@ trait Auditable
     public function setAuditMessage(string $message): self
     {
         $this->auditMessage = $message;
+
         return $this;
     }
 
@@ -95,6 +101,7 @@ trait Auditable
     {
         $message = $this->auditMessage;
         $this->auditMessage = null; // Clear after getting
+
         return $message;
     }
 
@@ -104,6 +111,7 @@ trait Auditable
     public function withAuditMessage(string $message, \Closure $callback)
     {
         $this->setAuditMessage($message);
+
         return $callback();
     }
 
@@ -123,6 +131,7 @@ trait Auditable
     public function disableAuditing(): self
     {
         $this->auditEnabled = false;
+
         return $this;
     }
 
@@ -132,6 +141,7 @@ trait Auditable
     public function enableAuditing(): self
     {
         $this->auditEnabled = true;
+
         return $this;
     }
 
@@ -166,7 +176,7 @@ trait Auditable
     {
         static::$auditingDisabledFor = array_filter(
             static::$auditingDisabledFor,
-            fn($class) => $class !== $modelClass
+            fn ($class) => $class !== $modelClass
         );
     }
 
@@ -209,14 +219,14 @@ trait Auditable
     {
         $wasDisabled = in_array($modelClass, static::$auditingDisabledFor);
 
-        if (!$wasDisabled) {
+        if (! $wasDisabled) {
             static::disableAuditingFor($modelClass);
         }
 
         try {
             return $callback();
         } finally {
-            if (!$wasDisabled) {
+            if (! $wasDisabled) {
                 static::enableAuditingFor($modelClass);
             }
         }
@@ -228,7 +238,7 @@ trait Auditable
     public function shouldAudit(): bool
     {
         // Check global auditing state
-        if (!static::$auditingEnabled) {
+        if (! static::$auditingEnabled) {
             return false;
         }
 
@@ -238,7 +248,7 @@ trait Auditable
         }
 
         // Check instance-level setting
-        if (property_exists($this, 'auditEnabled') && !$this->auditEnabled) {
+        if (property_exists($this, 'auditEnabled') && ! $this->auditEnabled) {
             return false;
         }
 
@@ -293,7 +303,7 @@ trait Auditable
             'deleted_at',
             'remember_token',
             'password',
-            'password_confirmation'
+            'password_confirmation',
         ];
 
         if (property_exists($this, 'auditExcluded')) {
