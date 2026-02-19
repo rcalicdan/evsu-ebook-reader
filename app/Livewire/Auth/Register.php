@@ -6,6 +6,7 @@ use App\Enums\Course;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Models\StudentProfile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -50,7 +51,7 @@ class Register extends Component
             'password.required'             => 'Password is required.',
             'password.min'                  => 'Password must be at least 8 characters.',
             'password.confirmed'            => 'Password confirmation does not match.',
-            'password_confirmation.required'=> 'Please confirm your password.',
+            'password_confirmation.required' => 'Please confirm your password.',
         ];
     }
 
@@ -73,7 +74,11 @@ class Register extends Component
             'student_id' => $validated['student_id'],
         ]);
 
-        $this->redirect(route('pending-approval'), navigate: true);
+        Auth::login($user);
+
+        session()->regenerate();
+
+        $this->redirect(route('pending-approval'), navigate: false);
     }
 
     public function render()

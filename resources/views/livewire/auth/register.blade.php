@@ -2,16 +2,48 @@
     <div class="bg-white shadow-2xl rounded-xl overflow-hidden">
         <x-auth.header />
 
-        <!-- Form Content -->
         <div class="form-content px-5 py-6 sm:px-10 sm:py-8">
             <form wire:submit="register">
 
-                <!-- Full Name -->
+                <!-- First Name & Last Name -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" wire:model="first_name" placeholder="Juan"
+                            class="@error('first_name') error @enderror" required autofocus>
+                        @error('first_name')
+                            <div class="error-message">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" wire:model="last_name" placeholder="Dela Cruz"
+                            class="@error('last_name') error @enderror" required>
+                        @error('last_name')
+                            <div class="error-message">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Student ID -->
                 <div class="form-group mb-4">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" wire:model="name" placeholder="Juan Dela Cruz"
-                        class="@error('name') error @enderror" required autofocus>
-                    @error('name')
+                    <label for="student_id">Student ID</label>
+                    <input type="text" id="student_id" wire:model="student_id" placeholder="e.g. 2021-00001"
+                        class="@error('student_id') error @enderror" required>
+                    @error('student_id')
                         <div class="error-message">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -41,8 +73,8 @@
                             class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-sm transition-all duration-200 hover:border-university-red/50 focus:border-university-red focus:outline-none focus:ring-2 focus:ring-university-red/20 @error('course') border-red-500 ring-2 ring-red-200 @enderror"
                             required>
                             <option value="" disabled selected>— Select your program —</option>
-                            @foreach ($courses as $course)
-                                <option value="{{ $course->value }}">{{ $course->label() }}</option>
+                            @foreach ($courses as $c)
+                                <option value="{{ $c->value }}">{{ $c->label() }}</option>
                             @endforeach
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">

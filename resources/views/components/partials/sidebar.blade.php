@@ -38,6 +38,14 @@
             </x-partials.sidebar-link>
         @endcan
 
+        @can('view-approvals')
+            <x-partials.sidebar-link href="{{ route('approvals.index') }}" route="approvals.*" label="Account Approvals">
+                <x-slot:icon>
+                    <x-partials.sidebar-icon path="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </x-slot:icon>
+            </x-partials.sidebar-link>
+        @endcan
+
         @can('viewAny', App\Models\Category::class)
             <x-partials.sidebar-link href="{{ route('categories.index') }}" route="categories.*" label="Categories">
                 <x-slot:icon>
