@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Course;
 use App\Enums\UserRole;
 use App\Libraries\Audit\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,5 +82,15 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function isSuspended(): bool
+    {
+        return (bool) $this->is_suspended;
+    }
+
+    public function isApproved(): bool
+    {
+        return (bool) $this->is_approved;
     }
 }

@@ -14,8 +14,6 @@ class StudentProfile extends Model
     protected $fillable = [
         'user_id',
         'student_id',
-        'program',
-        'year_level',
     ];
 
     protected $casts = [

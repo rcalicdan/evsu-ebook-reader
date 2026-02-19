@@ -16,19 +16,16 @@
         </x-ui.button>
     </div>
 
-    <!-- Edit Account Card -->
     <form wire:submit.prevent="update">
         <x-form.card>
-            <!-- Custom Header with Badge -->
             <x-slot:title>
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-lg font-bold text-gray-800">User Information</h3>
-                        <p class="text-sm text-gray-500 font-normal mt-1">Modify the fields below to update the account.
-                        </p>
+                        <p class="text-sm text-gray-500 font-normal mt-1">Modify the fields below to update the account.</p>
                     </div>
-                    <x-ui.badge variant="success">
-                        Active Account
+                    <x-ui.badge variant="{{ $is_suspended ? 'danger' : 'success' }}">
+                        {{ $is_suspended ? 'Suspended' : 'Active Account' }}
                     </x-ui.badge>
                 </div>
             </x-slot:title>
@@ -38,7 +35,6 @@
                     <x-ui.button variant="secondary" href="{{ route('users.index') }}">
                         Cancel
                     </x-ui.button>
-
                     <x-ui.button type="submit" variant="primary">
                         <x-slot:icon>
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +54,6 @@
                     <x-form.input type="text" id="first_name" wire:model="first_name" placeholder="John"
                         :error="$errors->first('first_name')" />
                 </div>
-
                 <div>
                     <x-form.label for="last_name" required>Last Name</x-form.label>
                     <x-form.input type="text" id="last_name" wire:model="last_name" placeholder="Doe"
@@ -80,7 +75,6 @@
                         </x-slot:icon>
                     </x-form.input>
                 </div>
-
                 <div>
                     <x-form.label for="role" required>System Role</x-form.label>
                     <x-form.select id="role" wire:model="role" placeholder="Select Role" :error="$errors->first('role')">
@@ -91,11 +85,24 @@
                 </div>
             </x-form.grid>
 
+            <!-- Course Row -->
+            <x-form.grid cols="2">
+                <div>
+                    <x-form.label for="course">Course / Program</x-form.label>
+                    <x-form.select id="course" wire:model="course" placeholder="Select Course" :error="$errors->first('course')">
+                        <option value="">— None —</option>
+                        @foreach ($courses as $c)
+                            <option value="{{ $c->value }}">{{ $c->label() }}</option>
+                        @endforeach
+                    </x-form.select>
+                </div>
+            </x-form.grid>
+
             <!-- Password Section -->
-            <x-form.section title="Security Password" description="Set a secure password for the user account">
+            <x-form.section title="Security Password" description="Leave blank to keep the current password">
                 <x-form.grid cols="2">
                     <div>
-                        <x-form.label for="password" required>Password</x-form.label>
+                        <x-form.label for="password">Password</x-form.label>
                         <x-form.input type="password" id="password" wire:model="password" placeholder="••••••••••••"
                             :error="$errors->first('password')" x-data="{ show: false }">
                             <x-slot:icon>
@@ -107,15 +114,13 @@
                             <x-slot:toggleIcon>
                                 <button type="button" @click="show = !show"
                                     class="text-gray-400 hover:text-gray-600 transition-colors">
-                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
-                                    <svg x-show="show" class="w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" x-cloak>
+                                    <svg x-show="show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                                     </svg>
@@ -123,9 +128,8 @@
                             </x-slot:toggleIcon>
                         </x-form.input>
                     </div>
-
                     <div>
-                        <x-form.label for="password_confirmation" required>Confirm Password</x-form.label>
+                        <x-form.label for="password_confirmation">Confirm Password</x-form.label>
                         <x-form.input type="password" id="password_confirmation" wire:model="password_confirmation"
                             placeholder="••••••••••••" :error="$errors->first('password_confirmation')" x-data="{ show: false }">
                             <x-slot:icon>
@@ -137,15 +141,13 @@
                             <x-slot:toggleIcon>
                                 <button type="button" @click="show = !show"
                                     class="text-gray-400 hover:text-gray-600 transition-colors">
-                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                     </svg>
-                                    <svg x-show="show" class="w-4 h-4" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24" x-cloak>
+                                    <svg x-show="show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" x-cloak>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                                     </svg>
@@ -155,6 +157,50 @@
                     </div>
                 </x-form.grid>
             </x-form.section>
+
+            <!-- Account Status Section -->
+            @if ($this->canToggleSuspension())
+                <x-form.section title="Account Status" description="Control whether this user can access the system">
+                    <div class="flex items-center justify-between p-4 rounded-xl border transition-colors duration-200
+                        {{ $is_suspended ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200' }}">
+
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200
+                                {{ $is_suspended ? 'bg-red-100' : 'bg-green-100' }}">
+                                @if ($is_suspended)
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                    </svg>
+                                @else
+                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @endif
+                            </div>
+
+                            <div>
+                                <p class="text-sm font-semibold {{ $is_suspended ? 'text-red-800' : 'text-green-800' }}">
+                                    {{ $is_suspended ? 'Account Suspended' : 'Account Active' }}
+                                </p>
+                                <p class="text-xs {{ $is_suspended ? 'text-red-600' : 'text-green-600' }}">
+                                    {{ $is_suspended ? 'This user is blocked from accessing the system.' : 'This user has full access to the system.' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button" wire:click="$toggle('is_suspended')"
+                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+                            {{ $is_suspended ? 'bg-red-500 focus:ring-red-500' : 'bg-green-500 focus:ring-green-500' }}">
+                            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                {{ $is_suspended ? 'translate-x-5' : 'translate-x-0' }}">
+                            </span>
+                        </button>
+                    </div>
+                </x-form.section>
+            @endif
+
         </x-form.card>
     </form>
 </div>

@@ -12,12 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
             $table->string('student_id', 50)->unique();
-            $table->string('program')->nullable();
             $table->smallInteger('year_level')->nullable();
             $table->timestamps();
 
             $table->index('student_id');
-            $table->index('program');
             $table->index('year_level');
         });
     }

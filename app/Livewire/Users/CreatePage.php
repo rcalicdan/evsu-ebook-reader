@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Users;
 
+use App\Enums\Course;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Services\RedirectNotification;
@@ -17,15 +18,11 @@ class CreatePage extends Component
     use AuthorizesRequests;
 
     public string $first_name = '';
-
     public string $last_name = '';
-
     public string $email = '';
-
     public string $role = '';
-
+    public string $course = '';
     public string $password = '';
-
     public string $password_confirmation = '';
 
     public function mount(): void
@@ -43,10 +40,11 @@ class CreatePage extends Component
 
         return [
             'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'role' => ['required', Rule::in(array_keys($allowedRoles))],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'email'      => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'role'       => ['required', Rule::in(array_keys($allowedRoles))],
+            'course'     => ['nullable', Rule::enum(Course::class)],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 
@@ -54,17 +52,18 @@ class CreatePage extends Component
     {
         return [
             'first_name.required' => 'First name is required.',
-            'first_name.max' => 'First name must not exceed 255 characters.',
-            'last_name.required' => 'Last name is required.',
-            'last_name.max' => 'Last name must not exceed 255 characters.',
-            'email.required' => 'Email address is required.',
-            'email.email' => 'Please enter a valid email address.',
-            'email.unique' => 'This email is already taken.',
-            'role.required' => 'System role is required.',
-            'role.in' => 'Please select a valid system role.',
-            'password.required' => 'Password is required.',
-            'password.min' => 'Password must be at least 8 characters.',
-            'password.confirmed' => 'Password confirmation does not match.',
+            'first_name.max'      => 'First name must not exceed 255 characters.',
+            'last_name.required'  => 'Last name is required.',
+            'last_name.max'       => 'Last name must not exceed 255 characters.',
+            'email.required'      => 'Email address is required.',
+            'email.email'         => 'Please enter a valid email address.',
+            'email.unique'        => 'This email is already taken.',
+            'role.required'       => 'System role is required.',
+            'role.in'             => 'Please select a valid system role.',
+            'course.enum'         => 'Please select a valid course.',
+            'password.required'   => 'Password is required.',
+            'password.min'        => 'Password must be at least 8 characters.',
+            'password.confirmed'  => 'Password confirmation does not match.',
         ];
     }
 
@@ -76,11 +75,13 @@ class CreatePage extends Component
 
         try {
             User::create([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'role' => $validated['role'],
-                'password' => Hash::make($validated['password']),
+                'first_name'  => $validated['first_name'],
+                'last_name'   => $validated['last_name'],
+                'email'       => $validated['email'],
+                'role'        => $validated['role'],
+                'course'      => $validated['course'] ?: null,
+                'password'    => Hash::make($validated['password']),
+                'is_approved' => true,
             ]);
 
             RedirectNotification::success('User created successfully!');
@@ -98,7 +99,8 @@ class CreatePage extends Component
     public function render()
     {
         return view('livewire.users.create-page', [
-            'roles' => $this->getAllowedRoles(),
+            'roles'   => $this->getAllowedRoles(),
+            'courses' => Course::cases(),
         ]);
     }
 
