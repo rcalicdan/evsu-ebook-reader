@@ -5,6 +5,8 @@ namespace App\Livewire\Home;
 use App\Enums\DocumentVisibility;
 use App\Models\Category;
 use App\Models\Document;
+use App\Services\RedirectNotification;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -27,21 +29,39 @@ class TablePage extends Component
     #[Url(keep: true)]
     public string $sort = 'latest';
 
+    public function mount(): void
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            if ($user->is_suspended) {
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+                RedirectNotification::error('Your account has been suspended. Please contact an administrator.');
+                $this->redirect(route('login'), navigate: true);
+                return;
+            }
+
+            if (!$user->is_approved) {
+                $this->redirect(route('pending-approval'), navigate: true);
+                return;
+            }
+        }
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
-
     public function updatingCategory(): void
     {
         $this->resetPage();
     }
-
     public function updatingStatus(): void
     {
         $this->resetPage();
     }
-
     public function updatingSort(): void
     {
         $this->resetPage();
@@ -63,26 +83,11 @@ class TablePage extends Component
                         });
                 });
             })
-            ->when(
-                $this->category,
-                fn ($query) => $query->where('category_id', $this->category)
-            )
-            ->when(
-                $this->status,
-                fn ($query) => $query->where('status', $this->status)
-            )
-            ->when(
-                $this->sort === 'latest',
-                fn ($query) => $query->latest()
-            )
-            ->when(
-                $this->sort === 'alphabetical',
-                fn ($query) => $query->orderBy('title')
-            )
-            ->when(
-                $this->sort === 'popular',
-                fn ($query) => $query->orderByDesc('view_count')
-            )
+            ->when($this->category, fn($query) => $query->where('category_id', $this->category))
+            ->when($this->status, fn($query) => $query->where('status', $this->status))
+            ->when($this->sort === 'latest', fn($query) => $query->latest())
+            ->when($this->sort === 'alphabetical', fn($query) => $query->orderBy('title'))
+            ->when($this->sort === 'popular', fn($query) => $query->orderByDesc('view_count'))
             ->paginate(25);
     }
 
@@ -94,7 +99,7 @@ class TablePage extends Component
     public function render()
     {
         return view('livewire.home.table-page', [
-            'documents' => $this->documents,
+            'documents'  => $this->documents,
             'categories' => $this->categories,
         ]);
     }

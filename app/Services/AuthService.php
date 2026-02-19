@@ -10,8 +10,6 @@ use Illuminate\Validation\ValidationException;
 class AuthService
 {
     /**
-     * Attempt to authenticate a user
-     *
      * @throws ValidationException
      */
     public function login(string $email, string $password, bool $remember = false): User
@@ -21,6 +19,12 @@ class AuthService
         if (! $user || ! Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        if ($user->is_suspended) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account has been suspended. Please contact an administrator.'],
             ]);
         }
 

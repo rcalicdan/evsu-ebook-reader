@@ -3,6 +3,8 @@
 namespace App\Livewire\Home;
 
 use App\Models\Document;
+use App\Services\RedirectNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -14,6 +16,24 @@ class DocumentShowPage extends Component
 
     public function mount(Document $document): void
     {
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            if ($user->is_suspended) {
+                Auth::logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+                RedirectNotification::error('Your account has been suspended. Please contact an administrator.');
+                $this->redirect(route('login'), navigate: true);
+                return;
+            }
+
+            if (!$user->is_approved) {
+                $this->redirect(route('pending-approval'), navigate: true);
+                return;
+            }
+        }
+
         abort_unless(
             $document->isPublic() && ($document->isActive() || $document->isArchived()),
             404,
@@ -32,7 +52,6 @@ class DocumentShowPage extends Component
 
         if (! Session::has($sessionKey)) {
             $this->document->incrementViewCount();
-
             Session::put($sessionKey, now()->timestamp);
         }
     }
