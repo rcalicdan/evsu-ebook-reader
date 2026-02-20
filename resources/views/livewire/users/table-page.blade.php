@@ -51,6 +51,7 @@
                     <x-table.cell header sortable sortField="first_name">Full Name</x-table.cell>
                     <x-table.cell header sortable sortField="email">Email Address</x-table.cell>
                     <x-table.cell header sortable sortField="role">System Role</x-table.cell>
+                    <x-table.cell header>Status</x-table.cell>
                     <x-table.cell header class="text-center">Actions</x-table.cell>
                 </x-table.head>
 
@@ -87,6 +88,16 @@
                             </x-table.cell>
 
                             <x-table.cell>
+                                @if ($user->is_rejected)
+                                    <x-ui.badge variant="danger">Rejected</x-ui.badge>
+                                @elseif ($user->is_approved)
+                                    <x-ui.badge variant="success">Approved</x-ui.badge>
+                                @else
+                                    <x-ui.badge variant="warning">Pending</x-ui.badge>
+                                @endif
+                            </x-table.cell>
+
+                            <x-table.cell>
                                 <div class="flex items-center justify-center gap-2">
                                     @can('update', $user)
                                         <x-ui.edit-button :href="route('users.edit', $user)" />
@@ -101,7 +112,7 @@
                         </x-table.row>
                     @empty
                         <x-table.row>
-                            <x-table.cell colspan="5" class="text-center py-8">
+                            <x-table.cell colspan="6" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">

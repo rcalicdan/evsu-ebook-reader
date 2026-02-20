@@ -38,7 +38,7 @@ class UpdatePage extends Component
         $this->email        = $user->email;
         $this->role         = $user->role->value;
         $this->course       = $user->course?->value ?? '';
-        $this->is_suspended = (bool) $user->is_suspended;
+        $this->is_suspended = (bool) $user->is_suspended || (bool) $user->is_rejected;
     }
 
     public function rules(): array
@@ -103,6 +103,9 @@ class UpdatePage extends Component
 
             if ($this->canToggleSuspension()) {
                 $updateData['is_suspended'] = $validated['is_suspended'];
+                if (!$validated['is_suspended']) {
+                    $updateData['is_rejected'] = false;
+                }
             }
 
             if ($this->password) {
