@@ -14,7 +14,7 @@ use Livewire\WithPagination;
 #[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use AuthorizesRequests, WithPagination, WithSorting;
+    use AuthorizesRequests, WithPagination, WithSorting; 
 
     #[Url(as: 'q')]
     public string $search = '';
