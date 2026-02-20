@@ -77,12 +77,20 @@
             <x-form.grid cols="2">
                 <div>
                     <x-form.label for="course">Course / Program</x-form.label>
-                    <x-form.select id="course" wire:model="course" placeholder="Select Course" :error="$errors->first('course')">
-                        <option value="">— None —</option>
-                        @foreach ($courses as $c)
-                            <option value="{{ $c->value }}">{{ $c->label() }}</option>
-                        @endforeach
-                    </x-form.select>
+                    @if ($courseReadOnly)
+                        <x-form.input type="text" id="course"
+                            value="{{ auth()->user()->course?->label() ?? '— None —' }}"
+                            disabled
+                            class="bg-gray-100 text-gray-500 cursor-not-allowed" />
+                        <input type="hidden" wire:model="course" />
+                    @else
+                        <x-form.select id="course" wire:model="course" placeholder="Select Course" :error="$errors->first('course')">
+                            <option value="">— None —</option>
+                            @foreach ($courses as $c)
+                                <option value="{{ $c->value }}">{{ $c->label() }}</option>
+                            @endforeach
+                        </x-form.select>
+                    @endif
                 </div>
             </x-form.grid>
 

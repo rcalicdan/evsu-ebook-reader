@@ -44,6 +44,38 @@ class TablePage extends Component
         $this->resetPage();
     }
 
+    public function approveUser(int $userId): void
+    {
+        try {
+            $user = User::findOrFail($userId);
+
+            $this->authorize('update', $user);
+
+            $user->update([
+                'is_approved' => true,
+                'is_rejected' => false,
+            ]);
+
+            $this->dispatch(
+                'notify',
+                message: "{$user->full_name} has been approved successfully.",
+                type: 'success'
+            );
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            $this->dispatch(
+                'notify',
+                message: 'You do not have permission to approve this user.',
+                type: 'error'
+            );
+        } catch (\Exception $e) {
+            $this->dispatch(
+                'notify',
+                message: 'An error occurred while approving the user. Please try again.',
+                type: 'error'
+            );
+        }
+    }
+
     public function deleteUser(int $userId): void
     {
         try {

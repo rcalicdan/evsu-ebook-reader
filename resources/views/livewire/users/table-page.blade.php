@@ -88,13 +88,15 @@
                             </x-table.cell>
 
                             <x-table.cell>
-                                @if ($user->isStudent())
+                                @if ($user->isAdmin() || $user->isSuperAdmin())
+                                    <x-ui.badge variant="success">Active</x-ui.badge>
+                                @elseif ($user->isStudent())
                                     @if ($user->is_rejected)
                                         <x-ui.badge variant="danger">Rejected</x-ui.badge>
                                     @elseif ($user->is_approved)
-                                        <x-ui.badge variant="success">Approved</x-ui.badge>
+                                        <x-ui.badge variant="success">Active</x-ui.badge>
                                     @else
-                                        <span class="text-gray-400 text-xs">—</span>
+                                        <x-ui.badge variant="warning">Pending</x-ui.badge>
                                     @endif
                                 @else
                                     <span class="text-gray-400 text-xs">—</span>
@@ -104,6 +106,17 @@
                             <x-table.cell>
                                 <div class="flex items-center justify-center gap-2">
                                     @can('update', $user)
+                                        @if ($user->isStudent() && !$user->is_approved && !$user->is_rejected)
+                                            <button
+                                                wire:click="approveUser({{ $user->id }})"
+                                                wire:confirm="Are you sure you want to approve {{ $user->full_name }}?"
+                                                class="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                Approve
+                                            </button>
+                                        @endif
                                         <x-ui.edit-button :href="route('users.edit', $user)" />
                                     @endcan
 

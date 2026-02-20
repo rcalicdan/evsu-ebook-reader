@@ -29,21 +29,26 @@ class CreatePage extends Component
     {
         $this->authorize('create', User::class);
 
-        if (auth()->user()->isAdmin()) {
+        $authUser = auth()->user();
+
+        if ($authUser->isAdmin()) {
             $this->role = UserRole::STUDENT->value;
+            // Auto-set course to admin's course
+            $this->course = $authUser->course?->value ?? '';
         }
     }
 
     public function rules(): array
     {
         $allowedRoles = $this->getAllowedRoles();
+        $allowedCourses = $this->getAllowedCourses();
 
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name'  => ['required', 'string', 'max:255'],
             'email'      => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
             'role'       => ['required', Rule::in(array_keys($allowedRoles))],
-            'course'     => ['nullable', Rule::enum(Course::class)],
+            'course'     => ['nullable', Rule::in(array_map(fn($c) => $c->value, $allowedCourses))],
             'password'   => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
@@ -60,7 +65,7 @@ class CreatePage extends Component
             'email.unique'        => 'This email is already taken.',
             'role.required'       => 'System role is required.',
             'role.in'             => 'Please select a valid system role.',
-            'course.enum'         => 'Please select a valid course.',
+            'course.in'           => 'Please select a valid course.',
             'password.required'   => 'Password is required.',
             'password.min'        => 'Password must be at least 8 characters.',
             'password.confirmed'  => 'Password confirmation does not match.',
@@ -99,8 +104,9 @@ class CreatePage extends Component
     public function render()
     {
         return view('livewire.users.create-page', [
-            'roles'   => $this->getAllowedRoles(),
-            'courses' => Course::cases(),
+            'roles'          => $this->getAllowedRoles(),
+            'courses'        => $this->getAllowedCourses(),
+            'courseReadOnly' => auth()->user()->isAdmin(),
         ]);
     }
 
@@ -119,6 +125,17 @@ class CreatePage extends Component
         }
 
         return [];
+    }
+
+    private function getAllowedCourses(): array
+    {
+        $authUser = auth()->user();
+
+        if ($authUser->isAdmin() && $authUser->course) {
+            return [$authUser->course];
+        }
+
+        return Course::cases();
     }
 
     private function getRoles(): array

@@ -99,12 +99,20 @@
             <x-form.grid cols="2">
                 <div>
                     <x-form.label for="course">Course / Program</x-form.label>
-                    <x-form.select id="course" wire:model="course" placeholder="Select Course" :error="$errors->first('course')">
-                        <option value="">— None —</option>
-                        @foreach ($courses as $c)
-                            <option value="{{ $c->value }}">{{ $c->label() }}</option>
-                        @endforeach
-                    </x-form.select>
+                    @if ($courseReadOnly)
+                        <x-form.input type="text" id="course"
+                            value="{{ $user->course?->label() ?? '— None —' }}"
+                            disabled
+                            class="bg-gray-100 text-gray-500 cursor-not-allowed" />
+                        <input type="hidden" wire:model="course" />
+                    @else
+                        <x-form.select id="course" wire:model="course" placeholder="Select Course" :error="$errors->first('course')">
+                            <option value="">— None —</option>
+                            @foreach ($courses as $c)
+                                <option value="{{ $c->value }}">{{ $c->label() }}</option>
+                            @endforeach
+                        </x-form.select>
+                    @endif
                 </div>
             </x-form.grid>
 
@@ -236,7 +244,6 @@
                                     </p>
                                 </div>
                             </div>
-                            {{-- Left = Rejected (off), Right = Approved (on) --}}
                             <button type="button" wire:click="$toggle('is_approved')"
                                 class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
                                 {{ $is_approved ? 'bg-green-500 focus:ring-green-500' : 'bg-red-500 focus:ring-red-500' }}">

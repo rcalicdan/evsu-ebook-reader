@@ -45,14 +45,15 @@ class UpdatePage extends Component
 
     public function rules(): array
     {
-        $allowedRoles = $this->getAllowedRoles();
+        $allowedRoles   = $this->getAllowedRoles();
+        $allowedCourses = $this->getAllowedCourses();
 
         $rules = [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name'  => ['required', 'string', 'max:255'],
             'email'      => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user->id)],
             'role'       => ['required', Rule::in(array_keys($allowedRoles))],
-            'course'     => ['nullable', Rule::enum(Course::class)],
+            'course'     => ['nullable', Rule::in(array_map(fn($c) => $c->value, $allowedCourses))],
         ];
 
         if ($this->canToggleSuspension()) {
@@ -79,7 +80,7 @@ class UpdatePage extends Component
             'email.unique'        => 'This email is already taken.',
             'role.required'       => 'System role is required.',
             'role.in'             => 'Please select a valid system role.',
-            'course.enum'         => 'Please select a valid course.',
+            'course.in'           => 'Please select a valid course.',
             'password.min'        => 'Password must be at least 8 characters.',
             'password.confirmed'  => 'Password confirmation does not match.',
         ];
@@ -92,6 +93,11 @@ class UpdatePage extends Component
         if (!$this->canToggleSuspension()) {
             $this->is_suspended = (bool) $this->user->is_suspended;
             $this->is_approved  = (bool) $this->user->is_approved;
+        }
+
+        // Prevent admin from changing their own course
+        if (auth()->user()->isAdmin() && $this->user->id === auth()->id()) {
+            $this->course = $this->user->course?->value ?? '';
         }
 
         $validated = $this->validate();
@@ -156,10 +162,31 @@ class UpdatePage extends Component
 
     public function render()
     {
+        $authUser = auth()->user();
+
         return view('livewire.users.update-page', [
-            'roles'   => $this->getAllowedRoles(),
-            'courses' => Course::cases(),
+            'roles'          => $this->getAllowedRoles(),
+            'courses'        => $this->getAllowedCourses(),
+            'courseReadOnly' => $authUser->isAdmin() && $this->user->id === auth()->id(),
         ]);
+    }
+
+    private function getAllowedCourses(): array
+    {
+        $authUser = auth()->user();
+
+        // Admin editing a student: only show admin's own course
+        if ($authUser->isAdmin() && $this->user->isStudent()) {
+            return $authUser->course ? [$authUser->course] : [];
+        }
+
+        // Admin editing themselves: locked, show current course only
+        if ($authUser->isAdmin() && $this->user->id === auth()->id()) {
+            return $this->user->course ? [$this->user->course] : [];
+        }
+
+        // SuperAdmin: all courses
+        return Course::cases();
     }
 
     private function getAllowedRoles(): array
