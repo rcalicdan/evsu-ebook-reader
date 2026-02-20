@@ -25,6 +25,7 @@ class User extends Authenticatable
         'course',
         'is_approved',
         'is_suspended',
+        'is_rejected',
     ];
 
     protected $hidden = [
@@ -32,10 +33,11 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'role' => UserRole::class,
-        'course' => Course::class,
+        'role'        => UserRole::class,
+        'course'      => Course::class,
         'is_approved' => 'boolean',
         'is_suspended' => 'boolean',
+        'is_rejected' => 'boolean',
     ];
 
     public function studentProfile(): HasOne
@@ -92,5 +94,10 @@ class User extends Authenticatable
     public function isApproved(): bool
     {
         return (bool) $this->is_approved;
+    }
+
+    public function isRejected(): bool
+    {
+        return (bool) $this->is_rejected;
     }
 }

@@ -14,7 +14,7 @@ use Livewire\WithPagination;
 #[Layout('components.layouts.app')]
 class TablePage extends Component
 {
-    use AuthorizesRequests, WithPagination, WithSorting; 
+    use AuthorizesRequests, WithPagination, WithSorting;
 
     #[Url(as: 'q')]
     public string $search = '';
@@ -74,11 +74,11 @@ class TablePage extends Component
         $this->authorize('approve-account', $user);
 
         try {
-            $user->delete();
+            $user->update(['is_rejected' => true]);
 
             $this->dispatch(
                 'notify',
-                message: "{$user->full_name} has been rejected and removed successfully.",
+                message: "{$user->full_name} has been rejected successfully.",
                 type: 'success'
             );
         } catch (\Exception $e) {
@@ -89,7 +89,6 @@ class TablePage extends Component
             );
         }
     }
-
     public function render()
     {
         $authUser = auth()->user();
@@ -97,6 +96,7 @@ class TablePage extends Component
         $query = User::query()
             ->with('studentProfile')
             ->where('is_approved', false)
+            ->where('is_rejected', false) // add this line
             ->when($this->search, function ($q) {
                 $q->where(function ($inner) {
                     $inner->where('first_name', 'like', '%' . $this->search . '%')
@@ -105,9 +105,8 @@ class TablePage extends Component
                         ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $this->search . '%']);
                 });
             })
-            ->when($this->courseFilter, fn ($q) => $q->where('course', $this->courseFilter))
-            ->when($authUser->isAdmin(), fn ($q) => $q->where('course', $authUser->course));
-
+            ->when($this->courseFilter, fn($q) => $q->where('course', $this->courseFilter))
+            ->when($authUser->isAdmin(), fn($q) => $q->where('course', $authUser->course));
         $query = $this->applySorting($query);
 
         $courses = $authUser->isSuperAdmin() ? Course::cases() : [];

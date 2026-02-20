@@ -22,6 +22,12 @@ class AuthService
             ]);
         }
 
+        if ($user->is_rejected) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account has been rejected. Please contact an administrator.'],
+            ]);
+        }
+
         if ($user->is_suspended) {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been suspended. Please contact an administrator.'],
