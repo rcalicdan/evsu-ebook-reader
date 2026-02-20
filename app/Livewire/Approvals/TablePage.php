@@ -67,6 +67,29 @@ class TablePage extends Component
         }
     }
 
+    public function reject(int $userId): void
+    {
+        $user = User::findOrFail($userId);
+
+        $this->authorize('approve-account', $user);
+
+        try {
+            $user->delete();
+
+            $this->dispatch(
+                'notify',
+                message: "{$user->full_name} has been rejected and removed successfully.",
+                type: 'success'
+            );
+        } catch (\Exception $e) {
+            $this->dispatch(
+                'notify',
+                message: 'An error occurred while rejecting the user.',
+                type: 'error'
+            );
+        }
+    }
+
     public function render()
     {
         $authUser = auth()->user();

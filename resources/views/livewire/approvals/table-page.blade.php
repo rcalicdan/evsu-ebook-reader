@@ -86,8 +86,9 @@
                             </x-table.cell>
 
                             <x-table.cell>
-                                <div class="flex items-center justify-center">
+                                <div class="flex items-center justify-center gap-2">
                                     <x-ui.approve-button :id="$user->id" :name="$user->full_name" wire="approve" />
+                                    <x-ui.reject-button :id="$user->id" :name="$user->full_name" wire="reject" />
                                 </div>
                             </x-table.cell>
                         </x-table.row>
