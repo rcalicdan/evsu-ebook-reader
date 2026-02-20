@@ -27,6 +27,7 @@ class UpdatePage extends Component
     public string $password = '';
     public string $password_confirmation = '';
     public bool $is_suspended = false;
+    public bool $is_approved = false;
 
     public function mount(User $user): void
     {
@@ -39,6 +40,7 @@ class UpdatePage extends Component
         $this->role         = $user->role->value;
         $this->course       = $user->course?->value ?? '';
         $this->is_suspended = (bool) $user->is_suspended || (bool) $user->is_rejected;
+        $this->is_approved  = (bool) $user->is_approved;
     }
 
     public function rules(): array
@@ -55,6 +57,7 @@ class UpdatePage extends Component
 
         if ($this->canToggleSuspension()) {
             $rules['is_suspended'] = ['boolean'];
+            $rules['is_approved']  = ['boolean'];
         }
 
         if ($this->password) {
@@ -88,6 +91,7 @@ class UpdatePage extends Component
 
         if (!$this->canToggleSuspension()) {
             $this->is_suspended = (bool) $this->user->is_suspended;
+            $this->is_approved  = (bool) $this->user->is_approved;
         }
 
         $validated = $this->validate();
@@ -103,9 +107,8 @@ class UpdatePage extends Component
 
             if ($this->canToggleSuspension()) {
                 $updateData['is_suspended'] = $validated['is_suspended'];
-                if (!$validated['is_suspended']) {
-                    $updateData['is_rejected'] = false;
-                }
+                $updateData['is_approved']  = $validated['is_approved'];
+                $updateData['is_rejected']  = !$validated['is_approved'];
             }
 
             if ($this->password) {

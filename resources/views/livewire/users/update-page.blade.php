@@ -24,9 +24,19 @@
                         <h3 class="text-lg font-bold text-gray-800">User Information</h3>
                         <p class="text-sm text-gray-500 font-normal mt-1">Modify the fields below to update the account.</p>
                     </div>
-                    <x-ui.badge variant="{{ $is_suspended ? 'danger' : 'success' }}">
-                        {{ $is_suspended ? 'Suspended' : 'Active Account' }}
-                    </x-ui.badge>
+                    <div class="flex items-center gap-2">
+                        {{-- Suspension badge --}}
+                        <x-ui.badge variant="{{ $is_suspended ? 'danger' : 'success' }}">
+                            {{ $is_suspended ? 'Suspended' : 'Active' }}
+                        </x-ui.badge>
+
+                        {{-- Approval badge (students only) --}}
+                        @if ($user->isStudent())
+                            <x-ui.badge variant="{{ $is_approved ? 'success' : 'danger' }}">
+                                {{ $is_approved ? 'Approved' : 'Rejected' }}
+                            </x-ui.badge>
+                        @endif
+                    </div>
                 </div>
             </x-slot:title>
 
@@ -161,9 +171,10 @@
             <!-- Account Status Section -->
             @if ($this->canToggleSuspension())
                 <x-form.section title="Account Status" description="Control whether this user can access the system">
+
+                    <!-- Suspension Toggle -->
                     <div class="flex items-center justify-between p-4 rounded-xl border transition-colors duration-200
                         {{ $is_suspended ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200' }}">
-
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200
                                 {{ $is_suspended ? 'bg-red-100' : 'bg-green-100' }}">
@@ -179,7 +190,6 @@
                                     </svg>
                                 @endif
                             </div>
-
                             <div>
                                 <p class="text-sm font-semibold {{ $is_suspended ? 'text-red-800' : 'text-green-800' }}">
                                     {{ $is_suspended ? 'Account Suspended' : 'Account Active' }}
@@ -189,7 +199,6 @@
                                 </p>
                             </div>
                         </div>
-
                         <button type="button" wire:click="$toggle('is_suspended')"
                             class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
                             {{ $is_suspended ? 'bg-red-500 focus:ring-red-500' : 'bg-green-500 focus:ring-green-500' }}">
@@ -198,6 +207,46 @@
                             </span>
                         </button>
                     </div>
+
+                    <!-- Approval Toggle (students only) -->
+                    @if ($user->isStudent())
+                        <div class="flex items-center justify-between p-4 rounded-xl border transition-colors duration-200 mt-3
+                            {{ $is_approved ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200' }}">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200
+                                    {{ $is_approved ? 'bg-green-100' : 'bg-red-100' }}">
+                                    @if ($is_approved)
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    @else
+                                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    @endif
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold {{ $is_approved ? 'text-green-800' : 'text-red-800' }}">
+                                        {{ $is_approved ? 'Account Approved' : 'Account Rejected' }}
+                                    </p>
+                                    <p class="text-xs {{ $is_approved ? 'text-green-600' : 'text-red-600' }}">
+                                        {{ $is_approved ? 'This user has been granted access to the system.' : 'This user has been rejected and cannot access the system.' }}
+                                    </p>
+                                </div>
+                            </div>
+                            {{-- Left = Rejected (off), Right = Approved (on) --}}
+                            <button type="button" wire:click="$toggle('is_approved')"
+                                class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
+                                {{ $is_approved ? 'bg-green-500 focus:ring-green-500' : 'bg-red-500 focus:ring-red-500' }}">
+                                <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out
+                                    {{ $is_approved ? 'translate-x-5' : 'translate-x-0' }}">
+                                </span>
+                            </button>
+                        </div>
+                    @endif
+
                 </x-form.section>
             @endif
 

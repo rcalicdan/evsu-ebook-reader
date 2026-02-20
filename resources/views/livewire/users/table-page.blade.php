@@ -88,12 +88,16 @@
                             </x-table.cell>
 
                             <x-table.cell>
-                                @if ($user->is_rejected)
-                                    <x-ui.badge variant="danger">Rejected</x-ui.badge>
-                                @elseif ($user->is_approved)
-                                    <x-ui.badge variant="success">Approved</x-ui.badge>
+                                @if ($user->isStudent())
+                                    @if ($user->is_rejected)
+                                        <x-ui.badge variant="danger">Rejected</x-ui.badge>
+                                    @elseif ($user->is_approved)
+                                        <x-ui.badge variant="success">Approved</x-ui.badge>
+                                    @else
+                                        <span class="text-gray-400 text-xs">—</span>
+                                    @endif
                                 @else
-                                    <x-ui.badge variant="warning">Pending</x-ui.badge>
+                                    <span class="text-gray-400 text-xs">—</span>
                                 @endif
                             </x-table.cell>
 

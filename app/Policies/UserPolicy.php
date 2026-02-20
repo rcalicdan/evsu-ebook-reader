@@ -6,33 +6,21 @@ use App\Models\User;
 
 class UserPolicy
 {
-    /**
-     * Determine if the user can view any users.
-     */
     public function viewAny(User $user): bool
     {
         return $user->isAdmin() || $user->isSuperAdmin();
     }
 
-    /**
-     * Determine if the user can view the user.
-     */
     public function view(User $user, User $model): bool
     {
         return $user->isAdmin() || $user->isSuperAdmin() || $user->id === $model->id;
     }
 
-    /**
-     * Determine if the user can create users.
-     */
     public function create(User $user): bool
     {
         return $user->isAdmin() || $user->isSuperAdmin();
     }
 
-    /**
-     * Determine if the user can update the user.
-     */
     public function update(User $user, User $model): bool
     {
         if ($user->isSuperAdmin()) {
@@ -40,15 +28,21 @@ class UserPolicy
         }
 
         if ($user->isAdmin()) {
-            return $model->isStudent() || $user->id === $model->id;
+            if ($user->id === $model->id) {
+                return true;
+            }
+
+            // admin cannot edit another admin or superadmin
+            if ($model->isAdmin() || $model->isSuperAdmin()) {
+                return false;
+            }
+
+            return $model->isStudent() && $user->course === $model->course;
         }
 
         return $user->id === $model->id;
     }
 
-    /**
-     * Determine if the user can delete the user.
-     */
     public function delete(User $user, User $model): bool
     {
         if ($user->id === $model->id) {
@@ -60,7 +54,7 @@ class UserPolicy
         }
 
         if ($user->isAdmin()) {
-            return $model->isStudent();
+            return $model->isStudent() && $user->course === $model->course;
         }
 
         return false;
