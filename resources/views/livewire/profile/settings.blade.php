@@ -67,24 +67,21 @@
                         @enderror
                     </div>
 
-                    <!-- Course — hidden for SuperAdmin -->
+                    {{-- Course field:
+                         - SuperAdmin : hidden entirely
+                         - Admin      : read-only (locked to their assigned course)
+                         - Student    : read-only (locked to their assigned course)
+                    --}}
                     @if (!Auth::user()->isSuperAdmin())
                         <div class="md:col-span-2">
                             <label for="course" class="block text-sm font-medium text-gray-700 mb-2">
                                 Course / Program <span class="text-red-500">*</span>
                             </label>
-                            <select id="course" wire:model="course"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-university-red focus:border-transparent transition @error('course') border-red-500 @enderror">
-                                <option value="" disabled>— Select your program —</option>
-                                @foreach ($courses as $c)
-                                    <option value="{{ $c->value }}" {{ $course === $c->value ? 'selected' : '' }}>
-                                        {{ $c->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('course')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <input type="text" id="course"
+                                value="{{ Auth::user()->course?->label() ?? '— None —' }}"
+                                disabled
+                                class="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed">
+                            <input type="hidden" wire:model="course" />
                         </div>
                     @endif
                 </div>

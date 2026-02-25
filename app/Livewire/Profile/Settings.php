@@ -46,6 +46,7 @@ class Settings extends Component
         ];
 
         // SuperAdmin has no course field
+        // Admin and Student have course but it is read-only (locked to current value)
         if (!$user->isSuperAdmin()) {
             $rules['course'] = ['required', Rule::enum(Course::class)];
         }
@@ -91,9 +92,14 @@ class Settings extends Component
 
     public function updateProfile()
     {
-        $validated = $this->validate();
-
         $user = Auth::user();
+
+        // Lock course to current value for admin and student — prevent Livewire tampering
+        if ($user->isAdmin() || $user->isStudent()) {
+            $this->course = $user->course?->value ?? '';
+        }
+
+        $validated = $this->validate();
 
         $updateData = [
             'first_name' => $validated['first_name'],
@@ -101,7 +107,7 @@ class Settings extends Component
             'email'      => $validated['email'],
         ];
 
-        // Only update course if not superadmin
+        // SuperAdmin has no course — skip it entirely
         if (!$user->isSuperAdmin()) {
             $updateData['course'] = $validated['course'];
         }
