@@ -65,11 +65,19 @@
                 </div>
                 <div>
                     <x-form.label for="role" required>System Role</x-form.label>
-                    <x-form.select id="role" wire:model="role" placeholder="Select Role" :error="$errors->first('role')">
-                        @foreach ($roles as $value => $label)
-                            <option value="{{ $value }}">{{ $label }}</option>
-                        @endforeach
-                    </x-form.select>
+                    @if (count($roles) === 1)
+                        <x-form.input type="text" id="role"
+                            value="{{ array_values($roles)[0] }}"
+                            disabled
+                            class="bg-gray-100 text-gray-500 cursor-not-allowed" />
+                        <input type="hidden" wire:model="role" />
+                    @else
+                        <x-form.select id="role" wire:model="role" placeholder="Select Role" :error="$errors->first('role')">
+                            @foreach ($roles as $value => $label)
+                                <option value="{{ $value }}">{{ $label }}</option>
+                            @endforeach
+                        </x-form.select>
+                    @endif
                 </div>
             </x-form.grid>
 
@@ -155,4 +163,4 @@
             </x-form.section>
         </x-form.card>
     </form>
-</div>
+</div>  

@@ -4,6 +4,7 @@ namespace App\Livewire\Profile;
 
 use App\Enums\Course;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -27,7 +28,7 @@ class Settings extends Component
         $this->first_name = $user->first_name;
         $this->last_name  = $user->last_name;
         $this->email      = $user->email;
-        $this->course     = $user->course?->value;
+        $this->course     = $user->course?->value ?? '';
 
         if ($user->isStudent() && $user->studentProfile) {
             $this->student_id = $user->studentProfile->student_id;
@@ -42,8 +43,12 @@ class Settings extends Component
             'first_name' => ['required', 'string', 'max:100'],
             'last_name'  => ['required', 'string', 'max:100'],
             'email'      => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'course'     => ['required', Rule::enum(Course::class)],
         ];
+
+        // SuperAdmin has no course field
+        if (!$user->isSuperAdmin()) {
+            $rules['course'] = ['required', Rule::enum(Course::class)];
+        }
 
         if ($user->isStudent()) {
             $rules['student_id'] = [
@@ -80,7 +85,7 @@ class Settings extends Component
             'new_password.required'             => 'New password is required.',
             'new_password.min'                  => 'New password must be at least 8 characters.',
             'new_password.confirmed'            => 'Password confirmation does not match.',
-            'student_id.regex' => 'Student ID must follow the format YYYY-NNNNN (e.g. 2021-00001), from 1900 to 2099.',
+            'student_id.regex'                  => 'Student ID must follow the format YYYY-NNNNN (e.g. 2021-00001), from 1900 to 2099.',
         ];
     }
 
@@ -90,12 +95,18 @@ class Settings extends Component
 
         $user = Auth::user();
 
-        $user->update([
+        $updateData = [
             'first_name' => $validated['first_name'],
             'last_name'  => $validated['last_name'],
             'email'      => $validated['email'],
-            'course'     => $validated['course'],
-        ]);
+        ];
+
+        // Only update course if not superadmin
+        if (!$user->isSuperAdmin()) {
+            $updateData['course'] = $validated['course'];
+        }
+
+        $user->update($updateData);
 
         if ($user->isStudent()) {
             $user->studentProfile()->updateOrCreate(
@@ -105,7 +116,7 @@ class Settings extends Component
         }
 
         if ($this->new_password) {
-            $user->update(['password' => $this->new_password]);
+            $user->update(['password' => Hash::make($this->new_password)]);
             $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
         }
 
