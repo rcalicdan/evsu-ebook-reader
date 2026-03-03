@@ -1,5 +1,6 @@
 /* resources/css/app.css */
 @import 'tailwindcss';
+@import 'pdfjs-dist/web/pdf_viewer.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
