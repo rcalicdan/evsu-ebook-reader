@@ -1,7 +1,4 @@
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.js"></script>
-
     <script>
         function documentViewer() {
             let pdfDoc = null;
@@ -28,9 +25,8 @@
                     total: 0
                 },
 
-                showPreview: false,
                 showMobileSearch: false,
-                loading: true,
+                
 
                 init() {
                     pdfjsLib.GlobalWorkerOptions.workerSrc =
