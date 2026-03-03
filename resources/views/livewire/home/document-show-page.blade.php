@@ -1,4 +1,4 @@
-<div class="w-full bg-slate-50 min-h-screen py-12">
+<div class="w-full bg-slate-50 min-h-screen py-6 sm:py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         <!-- Back Button -->
@@ -15,18 +15,18 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="documentViewer()">
             <!-- Left Column — Main Content -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
 
                 <!-- Document Header Card -->
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-1">
-                            <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ $document->title }}</h1>
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                        <div class="flex-1 min-w-0">
+                            <h1 class="text-xl sm:text-3xl font-bold text-slate-900 mb-2 leading-tight">{{ $document->title }}</h1>
                             <p class="text-sm text-slate-500">
                                 Published {{ $document->created_at->diffForHumans() }}
                             </p>
                         </div>
-                        <div class="flex flex-col gap-2 ml-4">
+                        <div class="flex flex-row sm:flex-col gap-2 sm:ml-4 shrink-0">
                             <span
                                 class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-{{ $document->status->color() }}-100 text-{{ $document->status->color() }}-800 capitalize">
                                 {{ $document->status->label() }}
@@ -39,36 +39,38 @@
                     </div>
 
                     @if ($document->description)
-                        <div class="mt-6 pt-6 border-t border-slate-200">
+                        <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200">
                             <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Description</h2>
-                            <p class="text-slate-700 leading-relaxed">{{ $document->description }}</p>
+                            <p class="text-slate-700 leading-relaxed text-sm sm:text-base">{{ $document->description }}</p>
                         </div>
                     @endif
                 </div>
 
                 <!-- File Preview Card -->
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                    <h2 class="text-lg font-bold text-slate-900 mb-4">Document Preview</h2>
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900 mb-4">Document Preview</h2>
 
-                    <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                        <div
-                            class="flex-shrink-0 w-12 h-12 bg-university-red/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-university-red" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-semibold text-slate-900 truncate">
-                                {{ basename($document->file_url) }}
-                            </p>
-                            <p class="text-xs text-slate-500 mt-0.5">
-                                PDF Document • Uploaded {{ $document->created_at->format('M d, Y') }}
-                            </p>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                            <div
+                                class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-university-red/10 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-university-red" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-slate-900 truncate">
+                                    {{ basename($document->file_url) }}
+                                </p>
+                                <p class="text-xs text-slate-500 mt-0.5">
+                                    PDF Document • Uploaded {{ $document->created_at->format('M d, Y') }}
+                                </p>
+                            </div>
                         </div>
                         <button type="button" @click="openPreview('{{ route('documents.preview', $document) }}')"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors shadow-sm">
+                            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors shadow-sm shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -82,8 +84,8 @@
 
                 <!-- Tags Card -->
                 @if ($document->tags->count() > 0)
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
-                        <h2 class="text-lg font-bold text-slate-900 mb-4">Tags</h2>
+                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 mb-4">Tags</h2>
                         <div class="flex flex-wrap gap-2">
                             @foreach ($document->tags as $tag)
                                 <span
@@ -101,10 +103,10 @@
             </div>
 
             <!-- Right Column — Sidebar -->
-            <div class="space-y-6">
+            <div class="space-y-4 sm:space-y-6">
 
                 <!-- Category Card -->
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Category</h2>
                     <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
                         <div
@@ -115,11 +117,11 @@
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-sm font-semibold text-slate-900">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-900 truncate">
                                 {{ $document->category->name ?? 'Uncategorized' }}</p>
                             @if ($document->category?->description)
-                                <p class="text-xs text-slate-500 mt-0.5">
+                                <p class="text-xs text-slate-500 mt-0.5 truncate">
                                     {{ Str::limit($document->category->description, 50) }}</p>
                             @endif
                         </div>
@@ -127,16 +129,16 @@
                 </div>
 
                 <!-- Statistics Card -->
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Statistics</h2>
 
-                    <div class="space-y-3">
+                    <div class="grid grid-cols-2 lg:grid-cols-1 gap-3">
                         <!-- View Count -->
-                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                        <div class="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                    class="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -146,18 +148,18 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-blue-600 font-medium uppercase">Views</p>
-                                    <p class="text-xl font-bold text-blue-900">
+                                    <p class="text-lg sm:text-xl font-bold text-blue-900">
                                         {{ number_format($document->view_count) }}</p>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Published Date -->
-                        <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                        <div class="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                    class="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -174,7 +176,7 @@
                 </div>
 
                 <!-- Uploader Card -->
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6">
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Uploaded By</h2>
                     <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
                         <div
@@ -185,8 +187,8 @@
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <div>
-                            <p class="text-sm font-semibold text-slate-900">{{ $document->uploader->full_name }}</p>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-900 truncate">{{ $document->uploader->full_name }}</p>
                             <p class="text-xs text-slate-500">{{ $document->uploader->role->label() }}</p>
                         </div>
                     </div>
@@ -194,14 +196,14 @@
 
                 <!-- Login Prompt for Guests -->
                 @guest
-                    <div class="bg-gradient-to-br from-university-red to-red-700 text-white rounded-xl shadow-lg p-6">
+                    <div class="bg-gradient-to-br from-university-red to-red-700 text-white rounded-xl shadow-lg p-5 sm:p-6">
                         <div class="text-center">
-                            <svg class="w-12 h-12 mx-auto mb-3 opacity-90" fill="none" stroke="currentColor"
+                            <svg class="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-90" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
-                            <h3 class="text-lg font-bold mb-2">Want to access more?</h3>
+                            <h3 class="text-base sm:text-lg font-bold mb-2">Want to access more?</h3>
                             <p class="text-sm text-white/90 mb-4">Login to save favorites, access restricted documents, and
                                 more.</p>
                             <a wire:navigate href="{{ route('login') }}"
@@ -217,7 +219,7 @@
                 @endguest
             </div>
 
-            <!-- PDF Preview Modal - Reused from dashboard -->
+            <!-- PDF Preview Modal -->
             @include('livewire.documents.show-pdf-preview-modal')
         </div>
     </div>
