@@ -70,6 +70,20 @@
             </x-partials.sidebar-link>
         @endcan
 
+        {{-- Read Later - Available for all authenticated users --}}
+        <x-partials.sidebar-link href="{{ route('read-later.index') }}" route="read-later.*" label="Read Later">
+            <x-slot:icon>
+                <div class="relative inline-block">
+                    <x-partials.sidebar-icon path="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    {{-- Unread count badge --}}
+                    <span x-show="!sidebarCollapsed" 
+                        class="absolute -top-1 -right-1 bg-white text-university-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+                        5
+                    </span>
+                </div>
+            </x-slot:icon>
+        </x-partials.sidebar-link>
+
         @can('viewAny', App\Models\AuditLog::class)
             <x-partials.sidebar-link href="{{ route('audit-logs.index') }}" route="audit-logs.*" label="Audit Logs">
                 <x-slot:icon>

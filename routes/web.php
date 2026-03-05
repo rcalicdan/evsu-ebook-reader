@@ -62,6 +62,10 @@ Route::middleware(['auth', EnsureUserIsNotSuspended::class, EnsureUserIsApproved
             Route::get('{document}', \App\Livewire\Documents\ShowPage::class)->name('documents.show');
         });
 
+        Route::prefix('read-later')->group(function () {
+            Route::get('', \App\Livewire\ReadLater\IndexPage::class)->name('read-later.index');
+        });
+
         Route::prefix('audit-logs')->group(function () {
             Route::get('', \App\Livewire\AuditLogs\TablePage::class)->name('audit-logs.index');
             Route::get('{auditLog}', \App\Livewire\AuditLogs\ShowPage::class)->name('audit-logs.show');
