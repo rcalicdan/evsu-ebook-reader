@@ -30,7 +30,8 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="documentViewer()">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" x-data="documentViewer()"
+        @pdf-progress.window="$wire.saveProgress($event.detail.page)">
         <!-- Left Column — Main Info -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Document Info Card -->
@@ -81,7 +82,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
-                            {{ $document->category->name ?? "Not Set" }}
+                            {{ $document->category->name ?? 'Not Set' }}
                         </span>
                     </div>
 
@@ -120,16 +121,34 @@
                         </p>
                     </div>
                     <!-- Preview Button -->
-                    <button type="button" @click="openPreview('{{ route('documents.preview', $document) }}')"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        Preview
-                    </button>
+                    <div class="flex items-center gap-2">
+                        @auth
+                            <button wire:click="toggleReadLater"
+                                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors
+                      {{ $isInReadLater
+                          ? 'bg-university-red/10 text-university-red border-university-red/30 hover:bg-university-red/20'
+                          : 'bg-white text-gray-600 border-gray-300 hover:border-university-red hover:text-university-red' }}">
+                                <svg class="w-4 h-4" fill="{{ $isInReadLater ? 'currentColor' : 'none' }}"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                </svg>
+                                {{ $isInReadLater ? 'Saved' : 'Read Later' }}
+                            </button>
+                        @endauth
+
+                        <button type="button"
+                            @click="openPreview('{{ route('documents.preview', $document) }}', {{ $readLaterLastPage }}, {{ $isInReadLater ? 'true' : 'false' }})"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            Preview
+                        </button>
+                    </div>
                 </div>
             </x-form.card>
 
@@ -140,12 +159,13 @@
                     <p class="text-sm text-gray-500 font-normal mt-1">Categories and labels for this document.</p>
                 </x-slot:title>
 
-                @if($document->tags->count() > 0)
+                @if ($document->tags->count() > 0)
                     <div class="flex flex-wrap gap-2">
-                        @foreach($document->tags as $tag)
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-university-red/10 text-university-red rounded-lg text-sm font-medium border border-university-red/20 transition-colors hover:bg-university-red/20">
+                        @foreach ($document->tags as $tag)
+                            <span
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-university-red/10 text-university-red rounded-lg text-sm font-medium border border-university-red/20 transition-colors hover:bg-university-red/20">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                 </svg>
                                 {{ $tag->name }}
@@ -155,16 +175,17 @@
                 @else
                     <div class="flex flex-col items-center justify-center py-8 text-center">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
                         </div>
                         <p class="text-sm text-gray-500 font-medium">No tags assigned</p>
                         <p class="text-xs text-gray-400 mt-1">This document doesn't have any tags yet.</p>
                         @can('update', $document)
-                            <a href="{{ route('documents.edit', $document) }}" 
-                               class="mt-3 text-xs text-university-red hover:text-university-red/80 font-medium">
+                            <a href="{{ route('documents.edit', $document) }}"
+                                class="mt-3 text-xs text-university-red hover:text-university-red/80 font-medium">
                                 Add tags →
                             </a>
                         @endcan

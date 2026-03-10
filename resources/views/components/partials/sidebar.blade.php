@@ -75,11 +75,9 @@
             <x-slot:icon>
                 <div class="relative inline-block">
                     <x-partials.sidebar-icon path="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    {{-- Unread count badge --}}
-                    <span x-show="!sidebarCollapsed" 
-                        class="absolute -top-1 -right-1 bg-white text-university-red text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
-                        5
-                    </span>
+                    @auth
+                        @livewire('read-later.unread-count')
+                    @endauth
                 </div>
             </x-slot:icon>
         </x-partials.sidebar-link>

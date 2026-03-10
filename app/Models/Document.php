@@ -99,4 +99,16 @@ class Document extends Model
     {
         return 'slug';
     }
+
+    public function readLaterEntries(): HasMany
+    {
+        return $this->hasMany(ReadLater::class);
+    }
+
+    public function savedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'read_later')
+            ->withPivot(['is_read', 'read_at', 'last_page'])
+            ->withTimestamps();
+    }
 }

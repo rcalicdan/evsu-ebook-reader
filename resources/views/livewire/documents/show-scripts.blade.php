@@ -7,6 +7,8 @@
             let pdfFindController = null;
             let eventBus = null;
             let loadingTask = null;
+            let saveTimer = null;
+            let resizeObserver = null;  // tracks container size changes
 
             return {
                 showPreview: false,
@@ -26,32 +28,45 @@
                 },
 
                 showMobileSearch: false,
-                
+
+                _startPage: 1,
+                _isInReadLater: false,
 
                 init() {
-                    pdfjsLib.GlobalWorkerOptions.workerSrc =
-                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                    // workerSrc already set globally in pdf-viewer.js via Vite
+
+                    this.$watch('$wire.isInReadLater', (val) => {
+                        this._isInReadLater = val;
+                    });
                 },
 
-                openPreview(url) {
+                openPreview(url, startPage = 1, isInReadLater = false) {
+                    this._startPage = startPage;
+                    this._isInReadLater = isInReadLater;
+
                     this.showPreview = true;
                     this.loading = true;
                     this.error = false;
                     this.searchQuery = '';
-                    this.matchesCount = {
-                        current: 0,
-                        total: 0
-                    };
+                    this.matchesCount = { current: 0, total: 0 };
 
-                    setTimeout(() => {
-                        this.initializeViewer(url);
-                    }, 50);
+                    // Wait for the modal to be visible and have dimensions
+                    // before initializing — avoids zero-size container issues
+                    this.$nextTick(() => {
+                        setTimeout(() => this.initializeViewer(url), 100);
+                    });
                 },
 
                 closePreview() {
                     this.showPreview = false;
                     this.showMobileSearch = false;
                     this.searchQuery = '';
+                    clearTimeout(saveTimer);
+
+                    if (resizeObserver) {
+                        resizeObserver.disconnect();
+                        resizeObserver = null;
+                    }
 
                     if (loadingTask) {
                         loadingTask.destroy();
@@ -94,16 +109,35 @@
                             findController: pdfFindController,
                             renderer: 'canvas',
                             textLayerMode: 1,
+                            maxCanvasPixels: 16777216,
                         });
 
                         pdfLinkService.setViewer(pdfViewer);
 
+                        // Re-apply scale whenever the container is resized —
+                        // this covers DevTools opening, window resize, orientation change
+                        resizeObserver = new ResizeObserver(() => {
+                            if (pdfViewer && !this.loading) {
+                                // Reassigning currentScaleValue forces PDF.js
+                                // to recalculate page dimensions and re-render
+                                pdfViewer.currentScaleValue = pdfViewer.currentScaleValue;
+                            }
+                        });
+                        resizeObserver.observe(container);
 
                         eventBus.on('pagesinit', () => {
-                            if (window.innerWidth < 768) {
-                                pdfViewer.currentScaleValue = 'page-width';
-                            } else {
-                                pdfViewer.currentScaleValue = 'auto';
+                            pdfViewer.currentScaleValue = window.innerWidth < 768
+                                ? 'page-width'
+                                : 'auto';
+
+                            if (this._startPage > 1) {
+                                // Defer the page jump one tick so the viewer
+                                // has finished laying out all page placeholders
+                                // before we scroll — prevents blank page on resume
+                                setTimeout(() => {
+                                    pdfViewer.currentPageNumber = this._startPage;
+                                    pdfViewer.update();
+                                }, 50);
                             }
 
                             this.loading = false;
@@ -112,6 +146,15 @@
                         eventBus.on('pagechanging', (evt) => {
                             this.page = evt.pageNumber;
                             this.pageInput = evt.pageNumber;
+
+                            if (this._isInReadLater) {
+                                clearTimeout(saveTimer);
+                                saveTimer = setTimeout(() => {
+                                    window.dispatchEvent(new CustomEvent('pdf-progress', {
+                                        detail: { page: evt.pageNumber }
+                                    }));
+                                }, 1500);
+                            }
                         });
 
                         eventBus.on('scalechanging', (evt) => {

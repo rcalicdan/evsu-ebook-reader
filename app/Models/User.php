@@ -100,4 +100,21 @@ class User extends Authenticatable
     {
         return (bool) $this->is_rejected;
     }
+
+    public function readLater(): HasMany
+    {
+        return $this->hasMany(ReadLater::class);
+    }
+
+    public function readLaterDocuments(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class, 'read_later')
+            ->withPivot(['is_read', 'read_at', 'last_page'])
+            ->withTimestamps();
+    }
+
+    public function savedForLater(int $documentId): bool
+    {
+        return $this->readLater()->where('document_id', $documentId)->exists();
+    }
 }

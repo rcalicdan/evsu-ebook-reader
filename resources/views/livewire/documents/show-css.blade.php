@@ -1,6 +1,4 @@
 @push('styles')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.css">
-
     <style>
         #viewerContainer::-webkit-scrollbar {
             width: 10px;
@@ -25,6 +23,12 @@
             margin: 10px auto !important;
             border: 1px solid #e5e7eb;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background-clip: content-box;
+            background-color: white;
+        }
+
+        .pdfViewer .page canvas {
+            display: block;
         }
 
         .textLayer .highlight {
