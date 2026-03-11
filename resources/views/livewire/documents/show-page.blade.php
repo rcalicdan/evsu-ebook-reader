@@ -203,25 +203,14 @@
                     <p class="text-sm text-gray-500 font-normal mt-1">Engagement and usage metrics.</p>
                 </x-slot:title>
 
-                @php
-                    $courseColors = [
-                        'BSChE' => ['bg' => 'bg-orange-50',   'border' => 'border-orange-100', 'label' => 'text-orange-700', 'count' => 'text-orange-900', 'bar_bg' => 'bg-orange-100', 'bar_fill' => 'bg-orange-500'],
-                        'BSCE'  => ['bg' => 'bg-yellow-50',   'border' => 'border-yellow-100', 'label' => 'text-yellow-700', 'count' => 'text-yellow-900', 'bar_bg' => 'bg-yellow-100', 'bar_fill' => 'bg-yellow-500'],
-                        'BSEE'  => ['bg' => 'bg-blue-50',     'border' => 'border-blue-100',   'label' => 'text-blue-700',   'count' => 'text-blue-900',   'bar_bg' => 'bg-blue-100',   'bar_fill' => 'bg-blue-500'],
-                        'BSECE' => ['bg' => 'bg-indigo-50',   'border' => 'border-indigo-100', 'label' => 'text-indigo-700', 'count' => 'text-indigo-900', 'bar_bg' => 'bg-indigo-100', 'bar_fill' => 'bg-indigo-500'],
-                        'BSGE'  => ['bg' => 'bg-green-50',    'border' => 'border-green-100',  'label' => 'text-green-700',  'count' => 'text-green-900',  'bar_bg' => 'bg-green-100',  'bar_fill' => 'bg-green-500'],
-                        'BSIE'  => ['bg' => 'bg-pink-50',     'border' => 'border-pink-100',   'label' => 'text-pink-700',   'count' => 'text-pink-900',   'bar_bg' => 'bg-pink-100',   'bar_fill' => 'bg-pink-500'],
-                        'BSIT'  => ['bg' => 'bg-violet-50',   'border' => 'border-violet-100', 'label' => 'text-violet-700', 'count' => 'text-violet-900', 'bar_bg' => 'bg-violet-100', 'bar_fill' => 'bg-violet-500'],
-                        'BSME'  => ['bg' => 'bg-teal-50',     'border' => 'border-teal-100',   'label' => 'text-teal-700',   'count' => 'text-teal-900',   'bar_bg' => 'bg-teal-100',   'bar_fill' => 'bg-teal-500'],
-                    ];
-                @endphp
-
                 <div class="space-y-4">
-                    <!-- View Count -->
-                    <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+
+                    <!-- Total Views — clickable -->
+                    <button
+                        wire:click="$set('showViewsModal', true)"
+                        class="w-full text-left p-4 bg-blue-50 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors group cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center transition-colors">
                                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -230,44 +219,17 @@
                                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </div>
-                            <div>
+                            <div class="flex-1">
                                 <p class="text-xs text-blue-600 font-medium uppercase">Total Views</p>
                                 <p class="text-xl font-bold text-blue-900">{{ number_format($document->view_count) }}</p>
                             </div>
+                            <svg class="w-4 h-4 text-blue-400 group-hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
-                    </div>
-
-                    <!-- Per-course breakdown -->
-                    @if (!empty($viewsByCourse))
-                        @foreach ($viewsByCourse as $course => $count)
-                            @php
-                                $colors = $courseColors[$course] ?? [
-                                    'bg' => 'bg-gray-50', 'border' => 'border-gray-100',
-                                    'label' => 'text-gray-700', 'count' => 'text-gray-900',
-                                    'bar_bg' => 'bg-gray-100', 'bar_fill' => 'bg-gray-500',
-                                ];
-                            @endphp
-                            <div class="p-4 {{ $colors['bg'] }} rounded-xl border {{ $colors['border'] }}">
-                                <div class="flex items-center justify-between text-xs mb-2">
-                                    <span class="font-semibold {{ $colors['label'] }} uppercase tracking-wide">
-                                        {{ \App\Enums\Course::from($course)->value }}
-                                    </span>
-                                    <span class="font-bold {{ $colors['count'] }}">
-                                        {{ number_format($count) }} {{ Str::plural('view', $count) }}
-                                    </span>
-                                </div>
-                                <div class="w-full {{ $colors['bar_bg'] }} rounded-full h-1.5">
-                                    <div class="{{ $colors['bar_fill'] }} h-1.5 rounded-full"
-                                        style="width: {{ $document->view_count > 0 ? round(($count / $document->view_count) * 100) : 0 }}%">
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @else
-                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-center">
-                            <p class="text-xs text-gray-400 italic">No course breakdown available yet.</p>
-                        </div>
-                    @endif
+                        <p class="mt-2 text-xs text-blue-500">Click to see breakdown by course</p>
+                    </button>
 
                     <!-- Upload Date -->
                     <div class="p-4 bg-green-50 rounded-xl border border-green-100">
@@ -338,6 +300,114 @@
         <!-- PDF Preview Modal -->
         @include('livewire.documents.show-pdf-preview-modal')
     </div>
+
+    {{-- Views Breakdown Modal --}}
+    @if ($showViewsModal)
+        <div
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            @keydown.escape.window="$wire.set('showViewsModal', false)">
+
+            {{-- Backdrop --}}
+            <div
+                class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                wire:click="$set('showViewsModal', false)">
+            </div>
+
+            {{-- Modal Panel --}}
+            <div class="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl">
+
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Views by Course</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">
+                            {{ number_format($document->view_count) }} total {{ Str::plural('view', $document->view_count) }}
+                        </p>
+                    </div>
+                    <button
+                        wire:click="$set('showViewsModal', false)"
+                        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Body --}}
+                <div class="px-6 py-4 space-y-3 max-h-[60vh] overflow-y-auto">
+                    @php
+                        $modalCourseColors = [
+                            'BSChE' => ['bg' => 'bg-orange-50',  'border' => 'border-orange-200', 'label' => 'text-orange-700', 'count' => 'text-orange-900', 'bar_bg' => 'bg-orange-100', 'bar_fill' => 'bg-orange-500'],
+                            'BSCE'  => ['bg' => 'bg-yellow-50',  'border' => 'border-yellow-200', 'label' => 'text-yellow-700', 'count' => 'text-yellow-900', 'bar_bg' => 'bg-yellow-100', 'bar_fill' => 'bg-yellow-500'],
+                            'BSEE'  => ['bg' => 'bg-blue-50',    'border' => 'border-blue-200',   'label' => 'text-blue-700',   'count' => 'text-blue-900',   'bar_bg' => 'bg-blue-100',   'bar_fill' => 'bg-blue-500'],
+                            'BSECE' => ['bg' => 'bg-indigo-50',  'border' => 'border-indigo-200', 'label' => 'text-indigo-700', 'count' => 'text-indigo-900', 'bar_bg' => 'bg-indigo-100', 'bar_fill' => 'bg-indigo-500'],
+                            'BSGE'  => ['bg' => 'bg-green-50',   'border' => 'border-green-200',  'label' => 'text-green-700',  'count' => 'text-green-900',  'bar_bg' => 'bg-green-100',  'bar_fill' => 'bg-green-500'],
+                            'BSIE'  => ['bg' => 'bg-pink-50',    'border' => 'border-pink-200',   'label' => 'text-pink-700',   'count' => 'text-pink-900',   'bar_bg' => 'bg-pink-100',   'bar_fill' => 'bg-pink-500'],
+                            'BSIT'  => ['bg' => 'bg-violet-50',  'border' => 'border-violet-200', 'label' => 'text-violet-700', 'count' => 'text-violet-900', 'bar_bg' => 'bg-violet-100', 'bar_fill' => 'bg-violet-500'],
+                            'BSME'  => ['bg' => 'bg-teal-50',    'border' => 'border-teal-200',   'label' => 'text-teal-700',   'count' => 'text-teal-900',   'bar_bg' => 'bg-teal-100',   'bar_fill' => 'bg-teal-500'],
+                        ];
+                    @endphp
+
+                    @forelse ($viewsByCourse as $course => $count)
+                        @php
+                            $mc = $modalCourseColors[$course] ?? [
+                                'bg' => 'bg-gray-50', 'border' => 'border-gray-200',
+                                'label' => 'text-gray-700', 'count' => 'text-gray-900',
+                                'bar_bg' => 'bg-gray-100', 'bar_fill' => 'bg-gray-500',
+                            ];
+                            $percent = $document->view_count > 0
+                                ? round(($count / $document->view_count) * 100)
+                                : 0;
+                        @endphp
+                        <div class="p-4 {{ $mc['bg'] }} rounded-xl border {{ $mc['border'] }}">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-bold {{ $mc['label'] }}">
+                                    {{ \App\Enums\Course::from($course)->value }}
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold {{ $mc['count'] }}">
+                                        {{ number_format($count) }} {{ Str::plural('view', $count) }}
+                                    </span>
+                                    <span class="text-xs {{ $mc['label'] }} opacity-60 font-medium">
+                                        {{ $percent }}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="w-full {{ $mc['bar_bg'] }} rounded-full h-2">
+                                <div
+                                    class="{{ $mc['bar_fill'] }} h-2 rounded-full transition-all duration-500"
+                                    style="width: {{ $percent }}%">
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="flex flex-col items-center justify-center py-10 text-center">
+                            <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                                <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-medium text-gray-500">No course data yet</p>
+                            <p class="text-xs text-gray-400 mt-1">Views will appear here once students access this document.</p>
+                        </div>
+                    @endforelse
+                </div>
+
+                {{-- Footer --}}
+                <div class="px-6 py-4 border-t border-gray-100 flex justify-end">
+                    <button
+                        wire:click="$set('showViewsModal', false)"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 
 @include('livewire.documents.show-scripts')

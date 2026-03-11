@@ -18,6 +18,7 @@ class DocumentShowPage extends Component
     public bool $isInReadLater = false;
     public int $readLaterLastPage = 1;
     public array $viewsByCourse = [];
+    public bool $showViewsModal = false; 
 
     public function mount(Document $document): void
     {
@@ -56,12 +57,10 @@ class DocumentShowPage extends Component
     {
         $user = auth()->user();
 
-        // Skip superadmins and guests entirely — only students and admins count
         if (! $user || $user->isSuperAdmin()) {
             return;
         }
 
-        // Skip users that are not admin and have no course assigned
         if (! $user->isAdmin() && $user->course === null) {
             return;
         }
@@ -88,7 +87,7 @@ class DocumentShowPage extends Component
                 ->where('document_id', $this->document->id)
                 ->first();
 
-            $this->isInReadLater = (bool) $entry;
+            $this->isInReadLater     = (bool) $entry;
             $this->readLaterLastPage = $entry?->last_page ?? 1;
         }
     }
@@ -114,7 +113,7 @@ class DocumentShowPage extends Component
 
         if ($entry) {
             $entry->delete();
-            $this->isInReadLater = false;
+            $this->isInReadLater     = false;
             $this->readLaterLastPage = 1;
         } else {
             ReadLater::create([

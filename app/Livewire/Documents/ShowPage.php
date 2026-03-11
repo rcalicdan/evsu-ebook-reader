@@ -6,7 +6,6 @@ use App\Models\Document;
 use App\Models\DocumentView;
 use App\Models\ReadLater;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -19,6 +18,7 @@ class ShowPage extends Component
     public bool $isInReadLater = false;
     public int $readLaterLastPage = 1;
     public array $viewsByCourse = [];
+    public bool $showViewsModal = false; 
 
     public function mount(Document $document): void
     {
@@ -35,12 +35,10 @@ class ShowPage extends Component
     {
         $user = auth()->user();
 
-        // Skip superadmins and guests entirely
         if (! $user || $user->isSuperAdmin()) {
             return;
         }
 
-        // Skip users that are not admin and have no course assigned
         if (! $user->isAdmin() && $user->course === null) {
             return;
         }
@@ -67,7 +65,7 @@ class ShowPage extends Component
                 ->where('document_id', $this->document->id)
                 ->first();
 
-            $this->isInReadLater = (bool) $entry;
+            $this->isInReadLater     = (bool) $entry;
             $this->readLaterLastPage = $entry?->last_page ?? 1;
         }
     }
@@ -93,7 +91,7 @@ class ShowPage extends Component
 
         if ($entry) {
             $entry->delete();
-            $this->isInReadLater = false;
+            $this->isInReadLater     = false;
             $this->readLaterLastPage = 1;
         } else {
             ReadLater::create([

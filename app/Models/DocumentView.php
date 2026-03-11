@@ -13,6 +13,7 @@ class DocumentView extends Model
     protected $fillable = [
         'document_id',
         'user_id',
+        'course', 
         'ip_address',
         'user_agent',
         'viewed_at',
