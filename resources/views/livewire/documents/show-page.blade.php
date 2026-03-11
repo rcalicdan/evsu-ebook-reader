@@ -37,13 +37,12 @@
             <!-- Document Info Card -->
             <x-form.card>
                 <x-slot:title>
-                    <div class="flex items-center justify-between">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                             <h3 class="text-lg font-bold text-gray-800">Document Information</h3>
-                            <p class="text-sm text-gray-500 font-normal mt-1">Details and metadata about this document.
-                            </p>
+                            <p class="text-sm text-gray-500 font-normal mt-1">Details and metadata about this document.</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <x-ui.badge :variant="$document->status->color()">
                                 {{ $document->status->label() }}
                             </x-ui.badge>
@@ -56,14 +55,12 @@
                     </div>
                 </x-slot:title>
 
-                <!-- Title -->
                 <div class="space-y-6">
                     <div>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Title</p>
                         <p class="text-gray-900 font-semibold text-lg">{{ $document->title }}</p>
                     </div>
 
-                    <!-- Description -->
                     <div>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Description</p>
                         @if ($document->description)
@@ -73,11 +70,9 @@
                         @endif
                     </div>
 
-                    <!-- Category -->
                     <div>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Category</p>
-                        <span
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -86,10 +81,9 @@
                         </span>
                     </div>
 
-                    <!-- Slug -->
                     <div>
                         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Slug</p>
-                        <code class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg font-mono">
+                        <code class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-lg font-mono break-all">
                             {{ $document->slug }}
                         </code>
                     </div>
@@ -103,32 +97,32 @@
                     <p class="text-sm text-gray-500 font-normal mt-1">The file associated with this document.</p>
                 </x-slot:title>
 
-                <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div
-                        class="flex-shrink-0 w-12 h-12 bg-university-red/10 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-university-red" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="flex items-center gap-4 flex-1 min-w-0">
+                        <div class="flex-shrink-0 w-12 h-12 bg-university-red/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-university-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-gray-900 truncate">
+                                {{ basename($document->file_url) }}
+                            </p>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                Uploaded on {{ $document->created_at->format('M d, Y \a\t g:i A') }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-gray-900 truncate">
-                            {{ basename($document->file_url) }}
-                        </p>
-                        <p class="text-xs text-gray-500 mt-0.5">
-                            Uploaded on {{ $document->created_at->format('M d, Y \a\t g:i A') }}
-                        </p>
-                    </div>
-                    <!-- Preview Button -->
-                    <div class="flex items-center gap-2">
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 flex-wrap">
                         @auth
                             <button wire:click="toggleReadLater"
-                                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors
-                      {{ $isInReadLater
-                          ? 'bg-university-red/10 text-university-red border-university-red/30 hover:bg-university-red/20'
-                          : 'bg-white text-gray-600 border-gray-300 hover:border-university-red hover:text-university-red' }}">
-                                <svg class="w-4 h-4" fill="{{ $isInReadLater ? 'currentColor' : 'none' }}"
+                                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 py-2 text-sm font-medium rounded-lg border transition-colors
+                                    {{ $isInReadLater
+                                        ? 'bg-university-red/10 text-university-red border-university-red/30 hover:bg-university-red/20'
+                                        : 'bg-white text-gray-600 border-gray-300 hover:border-university-red hover:text-university-red' }}">
+                                <svg class="w-4 h-4 shrink-0" fill="{{ $isInReadLater ? 'currentColor' : 'none' }}"
                                     stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -139,8 +133,8 @@
 
                         <button type="button"
                             @click="openPreview('{{ route('documents.preview', $document) }}', {{ $readLaterLastPage }}, {{ $isInReadLater ? 'true' : 'false' }})"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 py-2 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -175,8 +169,7 @@
                 @else
                     <div class="flex flex-col items-center justify-center py-8 text-center">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                             </svg>
@@ -211,8 +204,7 @@
                         class="w-full text-left p-4 bg-blue-50 rounded-xl border border-blue-100 hover:bg-blue-100 transition-colors group cursor-pointer">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 bg-blue-100 group-hover:bg-blue-200 rounded-lg flex items-center justify-center transition-colors">
-                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -234,18 +226,15 @@
                     <!-- Upload Date -->
                     <div class="p-4 bg-green-50 rounded-xl border border-green-100">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                            <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <div>
                                 <p class="text-xs text-green-600 font-medium uppercase">Uploaded Date</p>
-                                <p class="text-sm font-bold text-green-900">
-                                    {{ $document->created_at->format('M d, Y') }}</p>
+                                <p class="text-sm font-bold text-green-900">{{ $document->created_at->format('M d, Y') }}</p>
                                 <p class="text-xs text-green-700">{{ $document->created_at->format('g:i A') }}</p>
                             </div>
                         </div>
@@ -254,18 +243,15 @@
                     <!-- Last Updated -->
                     <div class="p-4 bg-purple-50 rounded-xl border border-purple-100">
                         <div class="flex items-center gap-3">
-                            <div
-                                class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
+                            <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <div>
                                 <p class="text-xs text-purple-600 font-medium uppercase">Last Updated</p>
-                                <p class="text-sm font-bold text-purple-900">
-                                    {{ $document->updated_at->format('M d, Y') }}</p>
+                                <p class="text-sm font-bold text-purple-900">{{ $document->updated_at->format('M d, Y') }}</p>
                                 <p class="text-xs text-purple-700">{{ $document->updated_at->format('g:i A') }}</p>
                             </div>
                         </div>
@@ -281,17 +267,15 @@
                 </x-slot:title>
 
                 <div class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                    <div
-                        class="flex-shrink-0 w-10 h-10 bg-university-red/10 rounded-full flex items-center justify-center">
-                        <svg class="w-5 h-5 text-university-red" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
+                    <div class="flex-shrink-0 w-10 h-10 bg-university-red/10 rounded-full flex items-center justify-center">
+                        <svg class="w-5 h-5 text-university-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                     </div>
-                    <div>
-                        <p class="text-sm font-semibold text-gray-900">{{ $document->uploader->full_name }}</p>
-                        <p class="text-xs text-gray-500">{{ $document->uploader->email }}</p>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate">{{ $document->uploader->full_name }}</p>
+                        <p class="text-xs text-gray-500 truncate">{{ $document->uploader->email }}</p>
                     </div>
                 </div>
             </x-form.card>
