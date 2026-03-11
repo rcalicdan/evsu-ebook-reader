@@ -203,6 +203,19 @@
                     <p class="text-sm text-gray-500 font-normal mt-1">Engagement and usage metrics.</p>
                 </x-slot:title>
 
+                @php
+                    $courseColors = [
+                        'BSChE' => ['bg' => 'bg-orange-50',   'border' => 'border-orange-100', 'label' => 'text-orange-700', 'count' => 'text-orange-900', 'bar_bg' => 'bg-orange-100', 'bar_fill' => 'bg-orange-500'],
+                        'BSCE'  => ['bg' => 'bg-yellow-50',   'border' => 'border-yellow-100', 'label' => 'text-yellow-700', 'count' => 'text-yellow-900', 'bar_bg' => 'bg-yellow-100', 'bar_fill' => 'bg-yellow-500'],
+                        'BSEE'  => ['bg' => 'bg-blue-50',     'border' => 'border-blue-100',   'label' => 'text-blue-700',   'count' => 'text-blue-900',   'bar_bg' => 'bg-blue-100',   'bar_fill' => 'bg-blue-500'],
+                        'BSECE' => ['bg' => 'bg-indigo-50',   'border' => 'border-indigo-100', 'label' => 'text-indigo-700', 'count' => 'text-indigo-900', 'bar_bg' => 'bg-indigo-100', 'bar_fill' => 'bg-indigo-500'],
+                        'BSGE'  => ['bg' => 'bg-green-50',    'border' => 'border-green-100',  'label' => 'text-green-700',  'count' => 'text-green-900',  'bar_bg' => 'bg-green-100',  'bar_fill' => 'bg-green-500'],
+                        'BSIE'  => ['bg' => 'bg-pink-50',     'border' => 'border-pink-100',   'label' => 'text-pink-700',   'count' => 'text-pink-900',   'bar_bg' => 'bg-pink-100',   'bar_fill' => 'bg-pink-500'],
+                        'BSIT'  => ['bg' => 'bg-violet-50',   'border' => 'border-violet-100', 'label' => 'text-violet-700', 'count' => 'text-violet-900', 'bar_bg' => 'bg-violet-100', 'bar_fill' => 'bg-violet-500'],
+                        'BSME'  => ['bg' => 'bg-teal-50',     'border' => 'border-teal-100',   'label' => 'text-teal-700',   'count' => 'text-teal-900',   'bar_bg' => 'bg-teal-100',   'bar_fill' => 'bg-teal-500'],
+                    ];
+                @endphp
+
                 <div class="space-y-4">
                     <!-- View Count -->
                     <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
@@ -219,11 +232,42 @@
                             </div>
                             <div>
                                 <p class="text-xs text-blue-600 font-medium uppercase">Total Views</p>
-                                <p class="text-xl font-bold text-blue-900">{{ number_format($document->view_count) }}
-                                </p>
+                                <p class="text-xl font-bold text-blue-900">{{ number_format($document->view_count) }}</p>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Per-course breakdown -->
+                    @if (!empty($viewsByCourse))
+                        @foreach ($viewsByCourse as $course => $count)
+                            @php
+                                $colors = $courseColors[$course] ?? [
+                                    'bg' => 'bg-gray-50', 'border' => 'border-gray-100',
+                                    'label' => 'text-gray-700', 'count' => 'text-gray-900',
+                                    'bar_bg' => 'bg-gray-100', 'bar_fill' => 'bg-gray-500',
+                                ];
+                            @endphp
+                            <div class="p-4 {{ $colors['bg'] }} rounded-xl border {{ $colors['border'] }}">
+                                <div class="flex items-center justify-between text-xs mb-2">
+                                    <span class="font-semibold {{ $colors['label'] }} uppercase tracking-wide">
+                                        {{ \App\Enums\Course::from($course)->value }}
+                                    </span>
+                                    <span class="font-bold {{ $colors['count'] }}">
+                                        {{ number_format($count) }} {{ Str::plural('view', $count) }}
+                                    </span>
+                                </div>
+                                <div class="w-full {{ $colors['bar_bg'] }} rounded-full h-1.5">
+                                    <div class="{{ $colors['bar_fill'] }} h-1.5 rounded-full"
+                                        style="width: {{ $document->view_count > 0 ? round(($count / $document->view_count) * 100) : 0 }}%">
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-center">
+                            <p class="text-xs text-gray-400 italic">No course breakdown available yet.</p>
+                        </div>
+                    @endif
 
                     <!-- Upload Date -->
                     <div class="p-4 bg-green-50 rounded-xl border border-green-100">

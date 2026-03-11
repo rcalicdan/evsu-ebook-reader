@@ -111,4 +111,10 @@ class Document extends Model
             ->withPivot(['is_read', 'read_at', 'last_page'])
             ->withTimestamps();
     }
+
+    // Added
+    public function views(): HasMany
+    {
+        return $this->hasMany(DocumentView::class);
+    }
 }

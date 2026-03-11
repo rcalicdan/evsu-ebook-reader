@@ -3,6 +3,7 @@
 namespace App\Livewire\Home;
 
 use App\Models\Document;
+use App\Models\DocumentView;
 use App\Models\ReadLater;
 use App\Services\RedirectNotification;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class DocumentShowPage extends Component
     public Document $document;
     public bool $isInReadLater = false;
     public int $readLaterLastPage = 1;
+    public array $viewsByCourse = [];
 
     public function mount(Document $document): void
     {
@@ -47,16 +49,35 @@ class DocumentShowPage extends Component
 
         $this->trackDocumentView();
         $this->loadReadLaterState();
+        $this->loadViewsByCourse();
     }
 
     protected function trackDocumentView(): void
     {
-        $userId = auth()->id();
-        $sessionKey = "document_viewed_{$this->document->id}_user_{$userId}";
+        $user = auth()->user();
 
-        if (! Session::has($sessionKey)) {
+        // Skip superadmins and guests entirely — only students and admins count
+        if (! $user || $user->isSuperAdmin()) {
+            return;
+        }
+
+        // Skip users that are not admin and have no course assigned
+        if (! $user->isAdmin() && $user->course === null) {
+            return;
+        }
+
+        $alreadyViewed = DocumentView::where('document_id', $this->document->id)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if (! $alreadyViewed) {
             $this->document->incrementViewCount();
-            Session::put($sessionKey, now()->timestamp);
+
+            DocumentView::create([
+                'document_id' => $this->document->id,
+                'user_id'     => $user->id,
+                'course'      => $user->course?->value,
+            ]);
         }
     }
 
@@ -70,6 +91,17 @@ class DocumentShowPage extends Component
             $this->isInReadLater = (bool) $entry;
             $this->readLaterLastPage = $entry?->last_page ?? 1;
         }
+    }
+
+    protected function loadViewsByCourse(): void
+    {
+        $this->viewsByCourse = $this->document
+            ->views()
+            ->whereNotNull('course')
+            ->selectRaw('course, count(*) as total')
+            ->groupBy('course')
+            ->pluck('total', 'course')
+            ->toArray();
     }
 
     public function toggleReadLater(): void

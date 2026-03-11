@@ -154,8 +154,21 @@
                 <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
                     <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Statistics</h2>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-1 gap-3">
-                        <!-- View Count -->
+                    @php
+                        $courseColors = [
+                            'BSChE' => ['bg' => 'bg-orange-50',  'border' => 'border-orange-100', 'label' => 'text-orange-700', 'count' => 'text-orange-900', 'bar_bg' => 'bg-orange-100', 'bar_fill' => 'bg-orange-500'],
+                            'BSCE'  => ['bg' => 'bg-yellow-50',  'border' => 'border-yellow-100', 'label' => 'text-yellow-700', 'count' => 'text-yellow-900', 'bar_bg' => 'bg-yellow-100', 'bar_fill' => 'bg-yellow-500'],
+                            'BSEE'  => ['bg' => 'bg-blue-50',    'border' => 'border-blue-100',   'label' => 'text-blue-700',   'count' => 'text-blue-900',   'bar_bg' => 'bg-blue-100',   'bar_fill' => 'bg-blue-500'],
+                            'BSECE' => ['bg' => 'bg-indigo-50',  'border' => 'border-indigo-100', 'label' => 'text-indigo-700', 'count' => 'text-indigo-900', 'bar_bg' => 'bg-indigo-100', 'bar_fill' => 'bg-indigo-500'],
+                            'BSGE'  => ['bg' => 'bg-green-50',   'border' => 'border-green-100',  'label' => 'text-green-700',  'count' => 'text-green-900',  'bar_bg' => 'bg-green-100',  'bar_fill' => 'bg-green-500'],
+                            'BSIE'  => ['bg' => 'bg-pink-50',    'border' => 'border-pink-100',   'label' => 'text-pink-700',   'count' => 'text-pink-900',   'bar_bg' => 'bg-pink-100',   'bar_fill' => 'bg-pink-500'],
+                            'BSIT'  => ['bg' => 'bg-violet-50',  'border' => 'border-violet-100', 'label' => 'text-violet-700', 'count' => 'text-violet-900', 'bar_bg' => 'bg-violet-100', 'bar_fill' => 'bg-violet-500'],
+                            'BSME'  => ['bg' => 'bg-teal-50',    'border' => 'border-teal-100',   'label' => 'text-teal-700',   'count' => 'text-teal-900',   'bar_bg' => 'bg-teal-100',   'bar_fill' => 'bg-teal-500'],
+                        ];
+                    @endphp
+
+                    <div class="space-y-3">
+                        <!-- Total Views -->
                         <div class="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-100">
                             <div class="flex items-center gap-3">
                                 <div
@@ -169,12 +182,44 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-blue-600 font-medium uppercase">Views</p>
+                                    <p class="text-xs text-blue-600 font-medium uppercase">Total Views</p>
                                     <p class="text-lg sm:text-xl font-bold text-blue-900">
                                         {{ number_format($document->view_count) }}</p>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Per-course breakdown -->
+                        @if (!empty($viewsByCourse))
+                            @foreach ($viewsByCourse as $course => $count)
+                                @php
+                                    $colors = $courseColors[$course] ?? [
+                                        'bg' => 'bg-gray-50', 'border' => 'border-gray-100',
+                                        'label' => 'text-gray-700', 'count' => 'text-gray-900',
+                                        'bar_bg' => 'bg-gray-100', 'bar_fill' => 'bg-gray-500',
+                                    ];
+                                @endphp
+                                <div class="p-3 sm:p-4 {{ $colors['bg'] }} rounded-lg border {{ $colors['border'] }}">
+                                    <div class="flex items-center justify-between text-xs mb-2">
+                                        <span class="font-semibold {{ $colors['label'] }} uppercase tracking-wide">
+                                            {{ \App\Enums\Course::from($course)->value }}
+                                        </span>
+                                        <span class="font-bold {{ $colors['count'] }}">
+                                            {{ number_format($count) }} {{ Str::plural('view', $count) }}
+                                        </span>
+                                    </div>
+                                    <div class="w-full {{ $colors['bar_bg'] }} rounded-full h-1.5">
+                                        <div class="{{ $colors['bar_fill'] }} h-1.5 rounded-full"
+                                            style="width: {{ $document->view_count > 0 ? round(($count / $document->view_count) * 100) : 0 }}%">
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-100 text-center">
+                                <p class="text-xs text-gray-400 italic">No course breakdown available yet.</p>
+                            </div>
+                        @endif
 
                         <!-- Published Date -->
                         <div class="p-3 sm:p-4 bg-green-50 rounded-lg border border-green-100">
@@ -228,8 +273,8 @@
                                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                             <h3 class="text-base sm:text-lg font-bold mb-2">Want to access more?</h3>
-                            <p class="text-sm text-white/90 mb-4">Login to save favorites, access restricted documents, and
-                                more.</p>
+                            <p class="text-sm text-white/90 mb-4">Login to save favorites, access restricted documents,
+                                and more.</p>
                             <a wire:navigate href="{{ route('login') }}"
                                 class="inline-flex items-center gap-2 px-4 py-2 bg-white text-university-red rounded-lg font-semibold text-sm hover:bg-gray-50 transition-colors">
                                 Login Now
