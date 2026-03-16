@@ -195,6 +195,8 @@
                         ->take(2)->map(fn($w) => strtoupper($w[0]))->implode('');
                         $course = $comment->user->course?->value;
                         $cc = $courseColors[$course] ?? ['bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'badge_bg' => 'bg-slate-100', 'badge_text' => 'text-slate-600'];
+                        $canEditComment = auth()->check() && \Illuminate\Support\Facades\Gate::check('update', $comment);
+                        $canDeleteComment = auth()->check() && \Illuminate\Support\Facades\Gate::check('delete', $comment);
                         @endphp
 
                         <div wire:key="comment-{{ $comment->id }}" class="flex items-start gap-3">
@@ -258,17 +260,15 @@
                                         class="text-xs font-medium transition-colors {{ $replyingTo === $comment->id ? 'text-university-red' : 'text-slate-400 hover:text-university-red' }}">
                                         {{ $replyingTo === $comment->id ? 'Cancel' : 'Reply' }}
                                     </button>
-                                    @endauth
-                                    @auth
-                                    @if (auth()->id() === $comment->user_id)
+
+                                    @if ($canEditComment)
                                     <button wire:click="editComment({{ $comment->id }})" type="button"
                                         class="text-xs text-slate-400 hover:text-university-red transition-colors font-medium">
                                         Edit
                                     </button>
                                     @endif
-                                    @endauth
-                                    @auth
-                                    @if (auth()->id() === $comment->user_id || auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+
+                                    @if ($canDeleteComment)
                                     <button
                                         wire:click="deleteComment({{ $comment->id }})"
                                         wire:confirm="Are you sure you want to delete this comment?"
@@ -316,6 +316,8 @@
                                     ->take(2)->map(fn($w) => strtoupper($w[0]))->implode('');
                                     $replyCourse = $reply->user->course?->value;
                                     $rcc = $courseColors[$replyCourse] ?? ['bg' => 'bg-slate-100', 'text' => 'text-slate-600', 'badge_bg' => 'bg-slate-100', 'badge_text' => 'text-slate-600'];
+                                    $canEditReply = auth()->check() && \Illuminate\Support\Facades\Gate::check('update', $reply);
+                                    $canDeleteReply = auth()->check() && \Illuminate\Support\Facades\Gate::check('delete', $reply);
                                     @endphp
                                     <div wire:key="reply-{{ $reply->id }}" class="ml-4 pl-4 border-l-2 border-slate-100 flex items-start gap-3">
                                         <div class="flex-shrink-0 w-8 h-8 {{ $rcc['bg'] }} rounded-full flex items-center justify-center">
@@ -369,13 +371,13 @@
                                             @if ($editingComment !== $reply->id)
                                             @auth
                                             <div class="mt-1.5 flex items-center gap-3">
-                                                @if (auth()->id() === $reply->user_id)
+                                                @if ($canEditReply)
                                                 <button wire:click="editComment({{ $reply->id }})" type="button"
                                                     class="text-xs text-slate-400 hover:text-university-red transition-colors font-medium">
                                                     Edit
                                                 </button>
                                                 @endif
-                                                @if (auth()->id() === $reply->user_id || auth()->user()->isAdmin() || auth()->user()->isSuperAdmin())
+                                                @if ($canDeleteReply)
                                                 <button
                                                     wire:click="deleteComment({{ $reply->id }})"
                                                     wire:confirm="Are you sure you want to delete this reply?"

@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\DocumentComment;
 use App\Models\User;
+use App\Policies\CommentPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,5 +26,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-dashboard', function (User $user) {
             return $user->isAdmin() || $user->isSuperAdmin();
         });
+
+        Gate::policy(DocumentComment::class, CommentPolicy::class);
     }
 }

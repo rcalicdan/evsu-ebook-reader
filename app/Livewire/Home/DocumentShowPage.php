@@ -8,6 +8,7 @@ use App\Models\DocumentView;
 use App\Models\ReadLater;
 use App\Services\RedirectNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -112,7 +113,9 @@ class DocumentShowPage extends Component
     {
         $comment = DocumentComment::findOrFail($commentId);
 
-        abort_unless(auth()->id() === $comment->user_id, 403);
+        if (! Gate::check('update', $comment)) {
+            abort(403);
+        }
 
         if ($this->editingComment === $commentId) {
             $this->cancelEdit();
@@ -124,7 +127,6 @@ class DocumentShowPage extends Component
         $this->replyingTo     = null;
         $this->replyBody      = '';
     }
-
     public function updateComment(): void
     {
         $this->validate([
@@ -137,7 +139,9 @@ class DocumentShowPage extends Component
 
         $comment = DocumentComment::findOrFail($this->editingComment);
 
-        abort_unless(auth()->id() === $comment->user_id, 403);
+        if (! Gate::check('update', $comment)) {
+            abort(403);
+        }
 
         $comment->update([
             'comment'   => trim($this->editBody),
@@ -148,7 +152,6 @@ class DocumentShowPage extends Component
         $this->editingComment = null;
         $this->editBody       = '';
     }
-
     public function cancelEdit(): void
     {
         $this->editingComment = null;
@@ -159,14 +162,12 @@ class DocumentShowPage extends Component
     {
         $comment = DocumentComment::findOrFail($commentId);
 
-        abort_unless(
-            auth()->id() === $comment->user_id || auth()->user()->isAdmin() || auth()->user()->isSuperAdmin(),
-            403
-        );
+        if (! Gate::check('delete', $comment)) {
+            abort(403);
+        }
 
         $comment->delete();
 
-        // If deleting the last comment on this page, go back one page
         $remaining = DocumentComment::where('document_id', $this->document->id)
             ->whereNull('parent_id')
             ->count();
