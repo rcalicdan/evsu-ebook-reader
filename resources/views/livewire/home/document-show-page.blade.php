@@ -119,6 +119,174 @@
                         </div>
                     </div>
                 @endif
+
+                <!-- Comment Section Card -->
+                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 sm:p-6">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900 mb-4">
+                        Comments
+                        <span class="ml-2 text-sm font-medium text-slate-400">(3)</span>
+                    </h2>
+
+                    {{-- Comment Form --}}
+                    @auth
+                        <div class="mb-6">
+                            <div class="flex items-start gap-3">
+                                <div class="flex-shrink-0 w-9 h-9 bg-university-red/10 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-university-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <textarea
+                                        rows="3"
+                                        placeholder="Write a comment..."
+                                        class="w-full px-4 py-2.5 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-university-red/30 focus:border-university-red transition-colors placeholder:text-slate-400"
+                                    ></textarea>
+                                    <div class="mt-2 flex justify-end">
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-university-red text-white text-sm font-medium rounded-lg hover:bg-university-red/90 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                            </svg>
+                                            Post Comment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-xl text-center">
+                            <p class="text-sm text-slate-500">
+                                <a wire:navigate href="{{ route('login') }}" class="text-university-red font-semibold hover:underline">Login</a>
+                                to leave a comment.
+                            </p>
+                        </div>
+                    @endauth
+
+                    {{-- Divider --}}
+                    <div class="border-t border-slate-100 mb-5"></div>
+
+                    {{-- Static Comments List --}}
+                    <div class="space-y-5">
+
+                        {{-- Comment 1 --}}
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-blue-600">JD</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-semibold text-slate-800">Juan dela Cruz</span>
+                                    <span class="text-xs text-slate-400">•</span>
+                                    <span class="text-xs text-slate-400">2 days ago</span>
+                                    <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-violet-100 text-violet-700">BSIT</span>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    This document was really helpful for our finals review. The explanations are very clear and concise. Thanks for uploading!
+                                </p>
+                                <div class="mt-2 flex items-center gap-3">
+                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-university-red transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 1.941l-4.392 5.86A1 1 0 006 12v7a2 2 0 002 2h.095M14 10H6" />
+                                        </svg>
+                                        12
+                                    </button>
+                                    <button type="button" class="text-xs text-slate-400 hover:text-university-red transition-colors font-medium">
+                                        Reply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Comment 2 --}}
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-9 h-9 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-green-600">MA</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-semibold text-slate-800">Maria Andres</span>
+                                    <span class="text-xs text-slate-400">•</span>
+                                    <span class="text-xs text-slate-400">5 days ago</span>
+                                    <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">BSEE</span>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    I've been looking for this topic everywhere. Could someone upload the continuation? Would love to see part 2 of this.
+                                </p>
+                                <div class="mt-2 flex items-center gap-3">
+                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-university-red transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 1.941l-4.392 5.86A1 1 0 006 12v7a2 2 0 002 2h.095M14 10H6" />
+                                        </svg>
+                                        7
+                                    </button>
+                                    <button type="button" class="text-xs text-slate-400 hover:text-university-red transition-colors font-medium">
+                                        Reply
+                                    </button>
+                                </div>
+
+                                {{-- Nested Reply --}}
+                                <div class="mt-4 ml-4 pl-4 border-l-2 border-slate-100 flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-university-red/10 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-university-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <span class="text-sm font-semibold text-slate-800">Prof. Santos</span>
+                                            <span class="text-xs text-slate-400">•</span>
+                                            <span class="text-xs text-slate-400">4 days ago</span>
+                                            <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-university-red/10 text-university-red">Faculty</span>
+                                        </div>
+                                        <p class="text-sm text-slate-600 leading-relaxed">
+                                            Part 2 will be uploaded before the end of the week. Stay tuned!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Comment 3 --}}
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-9 h-9 bg-teal-100 rounded-full flex items-center justify-center">
+                                <span class="text-xs font-bold text-teal-600">RL</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-sm font-semibold text-slate-800">Ramon Lim</span>
+                                    <span class="text-xs text-slate-400">•</span>
+                                    <span class="text-xs text-slate-400">1 week ago</span>
+                                    <span class="ml-auto inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-teal-100 text-teal-700">BSME</span>
+                                </div>
+                                <p class="text-sm text-slate-600 leading-relaxed">
+                                    Great resource! Shared this with my study group. The diagrams on page 4 are especially useful for understanding the core concept.
+                                </p>
+                                <div class="mt-2 flex items-center gap-3">
+                                    <button type="button" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-university-red transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 1.941l-4.392 5.86A1 1 0 006 12v7a2 2 0 002 2h.095M14 10H6" />
+                                        </svg>
+                                        5
+                                    </button>
+                                    <button type="button" class="text-xs text-slate-400 hover:text-university-red transition-colors font-medium">
+                                        Reply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>{{-- end comments list --}}
+                </div>
+                {{-- End Comment Section Card --}}
+
             </div>
 
             <!-- Right Column — Sidebar -->

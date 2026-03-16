@@ -109,15 +109,15 @@ class UpdatePage extends Component
         if (strlen($this->tagSearch) >= 2) {
             $currentTagNames = array_filter(
                 array_column($this->tags, 'name'),
-                fn ($name) => ! empty(trim($name))
+                fn($name) => ! empty(trim($name))
             );
 
-            $this->suggestedTags = Tag::where('name', 'like', '%'.$this->tagSearch.'%')
+            $this->suggestedTags = Tag::where('name', 'like', '%' . $this->tagSearch . '%')
                 ->whereNotIn('name', $currentTagNames)
                 ->orderBy('name')
                 ->limit(10)
                 ->get()
-                ->map(fn ($tag) => [
+                ->map(fn($tag) => [
                     'id' => $tag->id,
                     'name' => $tag->name,
                     'slug' => $tag->slug,
@@ -175,7 +175,7 @@ class UpdatePage extends Component
         $existingTags = $this->document->tags()
             ->orderBy('name')
             ->get()
-            ->map(fn ($tag) => ['name' => $tag->name])
+            ->map(fn($tag) => ['name' => $tag->name])
             ->toArray();
 
         $this->tags = ! empty($existingTags) ? $existingTags : [['name' => '']];
@@ -221,11 +221,10 @@ class UpdatePage extends Component
     private function uploadFile(): string
     {
         $extension = $this->file->guessExtension();
-        $fileName = $this->document->slug.'.'.$extension;
+        $fileName = $this->document->slug . '_' . time() . '.' . $extension;
 
         return Storage::disk('public')->putFileAs('documents', $this->file, $fileName);
     }
-
     private function syncTags(): void
     {
         $tagIds = $this->processTagsInput();
