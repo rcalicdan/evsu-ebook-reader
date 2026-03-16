@@ -117,4 +117,9 @@ class Document extends Model
     {
         return $this->hasMany(DocumentView::class);
     }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(DocumentComment::class)->whereNull('parent_id')->with(['user', 'replies'])->latest();
+    }
 }
