@@ -293,4 +293,11 @@ class DocumentShowPage extends Component
             'totalComments' => $totalComments,
         ]);
     }
+
+    public function refreshComments(): void
+    {
+        // Just re-renders the component; no logic needed.
+        // Optionally reset to page 1:
+        // $this->resetPage();
+    }
 }

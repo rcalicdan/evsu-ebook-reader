@@ -43,11 +43,13 @@ class CommentPolicy
             return true;
         }
 
-        // Admin can edit comments from students in their course
+        // Admin can edit comments from students in their course,
+        // but NOT comments by Super Admins
         if ($user->isAdmin()) {
             $commenter = $comment->user;
 
             return $commenter !== null
+                && !$commenter->isSuperAdmin()  // ← block Super Admin comments
                 && $commenter->isStudent()
                 && $commenter->course?->value === $user->course?->value;
         }
@@ -55,12 +57,6 @@ class CommentPolicy
         return false;
     }
 
-    /**
-     * Who can delete a comment:
-     * - Super Admin (handled by before())
-     * - Admin: their own comments OR comments by students of their course
-     * - Student: only their own comments
-     */
     public function delete(User $user, DocumentComment $comment): bool
     {
         // Owner can always delete their own
@@ -68,11 +64,13 @@ class CommentPolicy
             return true;
         }
 
-        // Admin can delete comments from students in their course
+        // Admin can delete comments from students in their course,
+        // but NOT comments by Super Admins
         if ($user->isAdmin()) {
             $commenter = $comment->user;
 
             return $commenter !== null
+                && !$commenter->isSuperAdmin()  // ← block Super Admin comments
                 && $commenter->isStudent()
                 && $commenter->course?->value === $user->course?->value;
         }
