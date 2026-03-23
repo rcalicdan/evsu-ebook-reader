@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use App\Libraries\Audit\Auditable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DocumentComment extends Model
 {
+    use Auditable;
+
     protected $fillable = [
         'document_id',
         'user_id',
         'parent_id',
-        'comment',      // was 'body', now matches your migration
+        'comment',    
         'is_edited',
         'edited_at',
     ];
